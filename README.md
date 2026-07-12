@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a Next.js 16 site for Lolah Photography.
 
 ## Getting Started
 
@@ -16,9 +16,23 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Booking Form Email Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file with these values before testing live submissions:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-production-domain.com
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=Lolah Photography <bookings@yourdomain.com>
+RESEND_TO_EMAIL=booklolahphotography@gmail.com
+```
+
+Notes:
+
+- `RESEND_FROM_EMAIL` must be a sender verified in Resend for production delivery.
+- `NEXT_PUBLIC_SITE_URL` is used for metadata, sitemap, robots, and structured data.
+- The booking form posts to `/api/bookings` and forwards requests to Resend.
+- If the environment variables are missing, the form will return a configuration error instead of silently failing.
 
 ## Learn More
 
