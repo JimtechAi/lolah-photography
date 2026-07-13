@@ -8,31 +8,16 @@ import { useEffect, useState } from "react";
 type Testimonial = {
   name: string;
   quote: string;
-  image: string;
+  imageSrc: string;
 };
 
-const testimonials: Testimonial[] = [
-  {
-    name: "Sarah & David",
-    quote:
-      "Lolah Photography exceeded every expectation. Every photograph tells a story with elegance and emotion.",
-    image: "/images/portfolio/portfolio1.webp",
-  },
-  {
-    name: "Amara & Tunde",
-    quote:
-      "From planning to final delivery, the experience felt premium and effortless. We love every frame.",
-    image: "/images/portfolio/portfolio3.webp",
-  },
-  {
-    name: "Ife & Michael",
-    quote:
-      "Our wedding memories were captured with such beauty and detail. The album feels timeless.",
-    image: "/images/portfolio/portfolio5.webp",
-  },
-];
+type TestimonialsSectionProps = {
+  testimonials: Testimonial[];
+};
 
-export default function TestimonialsSection() {
+export default function TestimonialsSection({
+  testimonials,
+}: TestimonialsSectionProps) {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
@@ -41,7 +26,7 @@ export default function TestimonialsSection() {
     }, 6500);
 
     return () => clearInterval(id);
-  }, []);
+  }, [testimonials.length]);
 
   const previous = () => {
     setActive((prev) => (prev - 1 + testimonials.length) % testimonials.length);
@@ -79,7 +64,7 @@ export default function TestimonialsSection() {
         <div className="mt-12 grid grid-cols-1 gap-7 lg:grid-cols-12 lg:items-stretch">
           <article className="overflow-hidden rounded-3xl border border-yellow-200/15 lg:col-span-5">
             <Image
-              src={current.image}
+              src={current.imageSrc}
               alt={current.name}
               width={1000}
               height={1200}

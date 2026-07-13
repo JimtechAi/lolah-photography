@@ -25,6 +25,11 @@ const stats: StatItem[] = [
   { label: "Client Satisfaction", value: 100, suffix: "%" },
 ];
 
+type AboutSectionProps = {
+  portraitImageSrc: string;
+  portraitImageAlt: string;
+};
+
 function CountUp({ value, suffix }: { value: number; suffix: string }) {
   const ref = useRef<HTMLSpanElement | null>(null);
   const isInView = useInView(ref, { once: true, amount: 0.7 });
@@ -62,7 +67,10 @@ function CountUp({ value, suffix }: { value: number; suffix: string }) {
   );
 }
 
-export default function AboutSection() {
+export default function AboutSection({
+  portraitImageSrc,
+  portraitImageAlt,
+}: AboutSectionProps) {
   return (
     <section
       id="about"
@@ -81,8 +89,8 @@ export default function AboutSection() {
           <div className="lg:col-span-5">
             <div className="overflow-hidden rounded-3xl border border-yellow-300/20">
               <Image
-                src="/images/lolah/lolah.webp"
-                alt="Lolah Photography portrait"
+                src={portraitImageSrc}
+                alt={portraitImageAlt}
                 width={900}
                 height={1200}
                 className="h-full w-full object-cover"

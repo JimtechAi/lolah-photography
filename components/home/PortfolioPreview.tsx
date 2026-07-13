@@ -4,40 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-const portfolioImages = [
-  {
-    src: "/images/portfolio/portfolio1.webp",
-    alt: "Luxury wedding portrait",
-    title: "Joy & Michael",
-    subtitle: "Traditional Wedding",
-    category: "Wedding Stories",
-    size: "large-left",
-  },
-  {
-    src: "/images/portfolio/portfolio2.webp",
-    alt: "Bride and groom candid moment",
-    title: "Ada & David",
-    subtitle: "Luxury Reception",
-    category: "Wedding Stories",
-    size: "small-right",
-  },
-  {
-    src: "/images/portfolio/portfolio3.webp",
-    alt: "Elegant wedding ceremony frame",
-    title: "Bridal Portrait",
-    subtitle: "Editorial Session",
-    category: "Wedding Stories",
-    size: "small-right",
-  },
-  {
-    src: "/images/portfolio/portfolio4.webp",
-    alt: "Romantic reception photography",
-    title: "Wedding Moments",
-    subtitle: "Ceremony Highlights",
-    category: "Wedding Stories",
-    size: "wide-bottom",
-  },
-];
+type PortfolioPreviewImage = {
+  src: string;
+  alt: string;
+  title: string;
+  subtitle: string;
+  category: string;
+  size: "large-left" | "small-right" | "wide-bottom";
+};
+
+type PortfolioPreviewProps = {
+  images: PortfolioPreviewImage[];
+};
 
 const headingMotion = {
   hidden: { opacity: 0, y: 16 },
@@ -59,7 +37,7 @@ const bottomCardMotion = {
   visible: { opacity: 1, y: 0 },
 };
 
-export default function PortfolioPreview() {
+export default function PortfolioPreview({ images }: PortfolioPreviewProps) {
   return (
     <section
       id="portfolio"
@@ -113,7 +91,7 @@ export default function PortfolioPreview() {
         </motion.p>
 
         <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-12 md:auto-rows-[300px] md:gap-y-12">
-          {portfolioImages.map((image, index) => (
+          {images.map((image, index) => (
             <motion.article
               key={image.src}
               className={`group overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_42px_rgba(212,175,55,0.2)] ${

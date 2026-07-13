@@ -4,7 +4,6 @@ export const siteConfig = {
   description:
     "Luxury wedding photography in Ibadan and across Nigeria, crafted with timeless artistry and emotional storytelling.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  ogImage: "/images/hero/hero1.webp",
   email: "booklolahphotography@gmail.com",
   phone: "+2348068102500",
   instagram: "https://instagram.com/lolah.photography",

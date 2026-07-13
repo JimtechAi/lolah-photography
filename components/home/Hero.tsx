@@ -1,13 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 
-export default function Hero() {
+export default async function Hero() {
+  const heroImage = await getCloudinaryFolderImage("Hero", {
+    width: 2200,
+    height: 1400,
+  });
+
   return (
     <section className="relative h-[110vh] min-h-[760px] w-full overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/images/hero/hero1.webp"
-        alt="Lolah Photography Hero"
+        src={heroImage.src}
+        alt={heroImage.alt}
         fill
         priority
         className="hero-zoom drift object-cover object-[72%_center] brightness-[0.76] md:object-[76%_center]"
@@ -15,7 +21,7 @@ export default function Hero() {
 
       {/* Cinematic Gradient Overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/58 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-transparent to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-transparent to-blcack/30" />
       <div className="absolute inset-0 bg-[radial-gradient(40%_45%_at_73%_38%,rgba(255,242,223,0.34)_0%,rgba(255,242,223,0.18)_25%,rgba(255,242,223,0)_62%)] mix-blend-screen" />
 
       {/* Hero Content */}

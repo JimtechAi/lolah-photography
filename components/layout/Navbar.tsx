@@ -1,10 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { NAVIGATION } from "@/constants/navigation";
+import { ChevronDown } from "lucide-react";
+import { services } from "@/lib/services";
+import CloudinaryLogo from "@/components/ui/CloudinaryLogo";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -12,6 +14,11 @@ export default function Navbar() {
 
   const sectionLinks = useMemo(
     () => NAVIGATION.filter((item) => item.href.startsWith("/#")),
+    []
+  );
+
+  const serviceLinks = useMemo(
+    () => services.map((service) => ({ title: service.title, href: `/services/${service.slug}` })),
     []
   );
 
@@ -74,8 +81,8 @@ export default function Navbar() {
           href="/"
           className="inline-flex items-center"
         >
-          <Image
-            src="/images/logo/logo.webp"
+          <CloudinaryLogo
+            folderName="Logo"
             alt="Lolah Photography"
             width={80}
             height={80}
@@ -84,9 +91,8 @@ export default function Navbar() {
           />
         </Link>
 
-        <nav className="hidden md:flex gap-10">
-
-          {NAVIGATION.map((item) => (
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAVIGATION.filter((item) => item.title !== "Services" && item.title !== "Book Session").map((item) => (
             <Link
               key={item.title}
               href={item.href}
@@ -102,14 +108,39 @@ export default function Navbar() {
             </Link>
           ))}
 
-        </nav>
+          <div className="group relative">
+            <Link
+              href="/services"
+              className={getNavLinkClassName(pathname.startsWith("/services")) + " inline-flex items-center gap-1.5"}
+            >
+              Services
+              <ChevronDown className="h-3.5 w-3.5" />
+            </Link>
 
-        <Link
-          href="/booking"
-          className="hidden md:block rounded-full bg-yellow-500 px-6 py-2.5 font-medium text-black shadow-[0_8px_28px_rgba(234,179,8,0.26)] transition-all duration-300 hover:scale-[1.03] hover:bg-yellow-400 hover:shadow-[0_14px_34px_rgba(234,179,8,0.34)]"
-        >
-          Book Session
-        </Link>
+            <div className="invisible absolute left-1/2 top-full z-50 mt-3 w-[360px] -translate-x-1/2 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="rounded-3xl border border-yellow-200/15 bg-black/90 p-3 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+                <div className="grid max-h-[60vh] gap-1 overflow-auto">
+                  {serviceLinks.map((service) => (
+                    <Link
+                      key={service.href}
+                      href={service.href}
+                      className="rounded-2xl px-4 py-3 text-sm text-gray-200 transition hover:bg-white/5 hover:text-yellow-100"
+                    >
+                      {service.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Link
+            href="/booking"
+            className="rounded-full bg-yellow-500 px-6 py-2.5 font-medium text-black shadow-[0_8px_28px_rgba(234,179,8,0.26)] transition-all duration-300 hover:scale-[1.03] hover:bg-yellow-400 hover:shadow-[0_14px_34px_rgba(234,179,8,0.34)]"
+          >
+            Book Session
+          </Link>
+        </nav>
 
       </div>
     </header>

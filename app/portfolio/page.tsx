@@ -2,41 +2,82 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import PortfolioGallery from "@/components/portfolio/PortfolioGallery";
+import { getCloudinaryFolderImage, getCloudinaryFolderImages } from "@/lib/cloudinary-media";
+import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description:
-    "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const heroImage = await getCloudinaryFolderImage("Weddings", {
+    width: 1200,
+    height: 630,
+  });
 
-const portfolioImages = [
-  {
-    src: "/images/portfolio/portfolio1.webp",
-    alt: "Bride portrait in soft natural light",
-  },
-  {
-    src: "/images/portfolio/portfolio2.webp",
-    alt: "Bride and groom sharing a candid moment",
-  },
-  {
-    src: "/images/portfolio/portfolio3.webp",
-    alt: "Elegant ceremony detail and composition",
-  },
-  {
-    src: "/images/portfolio/portfolio4.webp",
-    alt: "Romantic reception atmosphere",
-  },
-  {
-    src: "/images/portfolio/portfolio5.webp",
-    alt: "Timeless wedding portrait of the couple",
-  },
-  {
-    src: "/images/portfolio/portfolio6.webp",
-    alt: "Celebration frame with movement and emotion",
-  },
-];
+  return {
+    title: "Portfolio",
+    description:
+      "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
+    keywords: [
+      "Lolah Photography portfolio",
+      "wedding photography portfolio",
+      "luxury portrait gallery",
+      "wedding stories",
+    ],
+    alternates: {
+      canonical: "/portfolio",
+    },
+    openGraph: {
+      title: "Portfolio | Lolah Photography",
+      description:
+        "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
+      url: "/portfolio",
+      siteName: siteConfig.name,
+      locale: "en_NG",
+      type: "website",
+      images: [
+        {
+          url: heroImage.src,
+          width: heroImage.width,
+          height: heroImage.height,
+          alt: heroImage.alt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Portfolio | Lolah Photography",
+      description:
+        "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
+      images: [heroImage.src],
+    },
+  };
+}
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const curatedFolders = [
+    "Weddings",
+    "Traditional",
+    "Engagements",
+    "Bridal Portraits",
+    "Maternity",
+    "Family",
+  ];
+
+  const folderImages = await Promise.all(
+    curatedFolders.map(async (folderName) => {
+      const images = await getCloudinaryFolderImages(folderName, {
+        limit: 1,
+        width: 900,
+        height: 1200,
+      });
+
+      return {
+        src: images[0].src,
+        alt: images[0].alt,
+      };
+    })
+  );
+
+  const portfolioImages = folderImages;
+
   return (
     <>
       <Navbar />

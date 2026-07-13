@@ -13,7 +13,7 @@ export const NAVIGATION = [
   },
   {
     title: "Services",
-    href: "/#services",
+    href: "/services",
   },
   {
     title: "Experience",
@@ -22,5 +22,9 @@ export const NAVIGATION = [
   {
     title: "Contact",
     href: "/contact",
+  },
+  {
+    title: "Book Session",
+    href: "/booking",
   },
 ];

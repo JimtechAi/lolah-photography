@@ -1,11 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 
-export default function BookingCTASection() {
+export default async function BookingCTASection() {
+  const heroImage = await getCloudinaryFolderImage("Hero", {
+    width: 1800,
+    height: 1200,
+  });
+
   return (
     <section className="relative overflow-hidden px-6 py-24 text-white md:px-10 lg:px-16 lg:py-32">
       <Image
-        src="/images/hero/hero2.webp"
+        src={heroImage.src}
         alt="Wedding couple cinematic background"
         fill
         className="object-cover"

@@ -1,18 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 
-const images = [
-  "/images/portfolio/portfolio1.webp",
-  "/images/portfolio/portfolio2.webp",
-  "/images/portfolio/portfolio3.webp",
-  "/images/portfolio/portfolio4.webp",
-  "/images/portfolio/portfolio5.webp",
-  "/images/portfolio/portfolio6.webp",
-  "/images/hero/hero2.webp",
-  "/images/hero/hero3.webp",
+const galleryFolders = [
+  "Weddings",
+  "Traditional",
+  "Engagements",
+  "Bridal Portraits",
+  "Maternity",
+  "Family",
+  "Baby And Newborn",
+  "Birthday Photography",
 ];
 
-export default function InstagramGallerySection() {
+export default async function InstagramGallerySection() {
+  const images = await Promise.all(
+    galleryFolders.map(async (folderName) => {
+      const image = await getCloudinaryFolderImage(folderName, {
+        width: 700,
+        height: 700,
+      });
+
+      return {
+        src: image.src,
+        alt: `${folderName} preview from Lolah Photography`,
+      };
+    })
+  );
+
   return (
     <section className="bg-[#0b0907] px-6 py-24 text-white md:px-10 lg:px-16 lg:py-32">
       <div className="mx-auto max-w-7xl">
@@ -25,15 +40,15 @@ export default function InstagramGallerySection() {
         </h2>
 
         <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {images.map((src, index) => (
+          {images.map((image, index) => (
             <article
-              key={src}
+              key={image.src}
               className="fade-in-up group overflow-hidden rounded-2xl border border-yellow-200/10"
               style={{ animationDelay: `${130 + index * 70}ms` }}
             >
               <Image
-                src={src}
-                alt="Lolah Photography Instagram preview"
+                src={image.src}
+                alt={image.alt}
                 width={700}
                 height={700}
                 className="aspect-square w-full object-cover transition duration-500 group-hover:scale-[1.05] group-hover:brightness-105"
