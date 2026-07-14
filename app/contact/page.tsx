@@ -4,11 +4,30 @@ import { AtSign, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import BookingForm from "@/components/booking/BookingForm";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
     "Send a wedding inquiry to Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    title: "Contact | Lolah Photography",
+    description:
+      "Send a wedding inquiry to Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
+    url: `${siteConfig.url}/contact`,
+    siteName: siteConfig.name,
+    locale: "en_NG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Contact | Lolah Photography",
+    description:
+      "Send a wedding inquiry to Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
+  },
 };
 
 const contactItems = [

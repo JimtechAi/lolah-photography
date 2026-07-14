@@ -8,6 +8,7 @@ type CloudinaryImage = {
   alt: string;
   width: number;
   height: number;
+  blurDataURL?: string;
 };
 
 type CloudinaryLogoProps = {
@@ -31,12 +32,22 @@ export default function CloudinaryLogo({
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const loadLogo = async () => {
       try {
         const response = await fetch(
-          `/api/cloudinary/${encodeURIComponent(folderName)}?limit=1`
+          `/api/cloudinary/${encodeURIComponent(folderName)}?limit=1`,
+          { signal: controller.signal, cache: "force-cache" }
         );
+
+        if (!response.ok) {
+          if (isMounted) {
+            setImage(null);
+          }
+          return;
+        }
+
         const data = (await response.json()) as { images?: CloudinaryImage[] };
 
         if (isMounted) {
@@ -53,6 +64,7 @@ export default function CloudinaryLogo({
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [folderName]);
 
@@ -77,7 +89,10 @@ export default function CloudinaryLogo({
       width={width}
       height={height}
       priority={priority}
+      placeholder={image.blurDataURL ? "blur" : "empty"}
+      blurDataURL={image.blurDataURL}
       className={className}
+      onError={() => setImage(null)}
     />
   );
 }

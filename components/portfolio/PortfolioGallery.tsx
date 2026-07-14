@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 type PortfolioImage = {
   src: string;
   alt: string;
+  blurDataURL?: string;
 };
 
 type PortfolioGalleryProps = {
@@ -83,6 +84,7 @@ export default function PortfolioGallery({ images }: PortfolioGalleryProps) {
             type="button"
             onClick={() => openLightbox(index)}
             className="group relative overflow-hidden rounded-2xl text-left"
+            aria-label={`Open image ${index + 1} in lightbox`}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
@@ -94,6 +96,8 @@ export default function PortfolioGallery({ images }: PortfolioGalleryProps) {
               width={900}
               height={1200}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              placeholder={image.blurDataURL ? "blur" : "empty"}
+              blurDataURL={image.blurDataURL}
               className="h-[420px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] md:h-[460px]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
@@ -173,6 +177,8 @@ export default function PortfolioGallery({ images }: PortfolioGalleryProps) {
                     fill
                     sizes="100vw"
                     priority
+                    placeholder={activeImage.blurDataURL ? "blur" : "empty"}
+                    blurDataURL={activeImage.blurDataURL}
                     className={`object-contain px-16 py-10 transition duration-300 ${
                       zoomed ? "scale-[1.45] cursor-zoom-out" : "scale-100 cursor-zoom-in"
                     }`}

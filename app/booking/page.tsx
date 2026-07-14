@@ -2,11 +2,30 @@ import type { Metadata } from "next";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import BookingForm from "@/components/booking/BookingForm";
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Book a Session",
   description:
     "Send your wedding booking request directly to Lolah Photography through a premium inquiry form.",
+  alternates: {
+    canonical: "/booking",
+  },
+  openGraph: {
+    title: "Book a Session | Lolah Photography",
+    description:
+      "Send your wedding booking request directly to Lolah Photography through a premium inquiry form.",
+    url: `${siteConfig.url}/booking`,
+    siteName: siteConfig.name,
+    locale: "en_NG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Book a Session | Lolah Photography",
+    description:
+      "Send your wedding booking request directly to Lolah Photography through a premium inquiry form.",
+  },
 };
 
 export default function BookingPage() {

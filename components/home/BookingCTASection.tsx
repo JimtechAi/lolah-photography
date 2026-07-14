@@ -14,6 +14,9 @@ export default async function BookingCTASection() {
         src={heroImage.src}
         alt="Wedding couple cinematic background"
         fill
+        sizes="100vw"
+        placeholder="blur"
+        blurDataURL={heroImage.blurDataURL}
         className="object-cover"
       />
       <div className="absolute inset-0 bg-black/75" />

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 type PortfolioPreviewImage = {
   src: string;
   alt: string;
+  blurDataURL?: string;
   title: string;
   subtitle: string;
   category: string;
@@ -119,6 +120,8 @@ export default function PortfolioPreview({ images }: PortfolioPreviewProps) {
                   alt={image.alt}
                   width={1200}
                   height={1500}
+                  placeholder={image.blurDataURL ? "blur" : "empty"}
+                  blurDataURL={image.blurDataURL}
                   className={`w-full object-cover transition duration-500 group-hover:scale-[1.05] group-hover:brightness-110 ${
                     image.size === "large-left"
                       ? "h-[620px]"

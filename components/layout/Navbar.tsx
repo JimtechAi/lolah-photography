@@ -1,16 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { NAVIGATION } from "@/constants/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { services } from "@/lib/services";
 import CloudinaryLogo from "@/components/ui/CloudinaryLogo";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [activeHref, setActiveHref] = useState("/");
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dropdownCloseTimeoutRef = useRef<number | null>(null);
+  const desktopMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
   const sectionLinks = useMemo(
     () => NAVIGATION.filter((item) => item.href.startsWith("/#")),
@@ -71,15 +76,76 @@ export default function Navbar() {
     };
   }, [pathname, sectionLinks]);
 
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        desktopMenuRef.current &&
+        !desktopMenuRef.current.contains(target)
+      ) {
+        setIsServicesOpen(false);
+      }
+
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsServicesOpen(false);
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (dropdownCloseTimeoutRef.current !== null) {
+        window.clearTimeout(dropdownCloseTimeoutRef.current);
+      }
+    },
+    []
+  );
+
+  const clearDropdownCloseTimer = () => {
+    if (dropdownCloseTimeoutRef.current !== null) {
+      window.clearTimeout(dropdownCloseTimeoutRef.current);
+      dropdownCloseTimeoutRef.current = null;
+    }
+  };
+
+  const openDropdown = () => {
+    clearDropdownCloseTimer();
+    setIsServicesOpen(true);
+  };
+
+  const closeDropdownWithDelay = () => {
+    clearDropdownCloseTimer();
+    dropdownCloseTimeoutRef.current = window.setTimeout(() => {
+      setIsServicesOpen(false);
+    }, 120);
+  };
+
   const isHomeActive = pathname === "/" && activeHref === "/";
 
   return (
     <header className="fade-in fixed top-0 left-0 w-full z-50 isolate border-b border-yellow-500/20 bg-black/30 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 py-2">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-5 py-2 md:px-8">
 
         <Link
           href="/"
           className="inline-flex items-center"
+          aria-label="Go to homepage"
         >
           <CloudinaryLogo
             folderName="Logo"
@@ -90,6 +156,17 @@ export default function Navbar() {
             className="h-auto w-[78px] object-contain mix-blend-screen brightness-110"
           />
         </Link>
+
+        <button
+          type="button"
+          className="inline-flex items-center justify-center rounded-full border border-yellow-200/20 bg-white/5 p-2.5 text-yellow-100 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70 md:hidden"
+          onClick={() => setIsMobileMenuOpen((current) => !current)}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-navigation"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+        >
+          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAVIGATION.filter((item) => item.title !== "Services" && item.title !== "Book Session").map((item) => (
@@ -108,23 +185,53 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <div className="group relative">
-            <Link
-              href="/services"
-              className={getNavLinkClassName(pathname.startsWith("/services")) + " inline-flex items-center gap-1.5"}
+          <div
+            ref={desktopMenuRef}
+            className="relative"
+            onMouseEnter={openDropdown}
+            onMouseLeave={closeDropdownWithDelay}
+          >
+            <button
+              type="button"
+              onClick={() => setIsServicesOpen((current) => !current)}
+              onFocus={openDropdown}
+              className={getNavLinkClassName(pathname.startsWith("/services")) + " inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70 rounded-full px-2 py-1"}
+              aria-haspopup="menu"
+              aria-expanded={isServicesOpen}
+              aria-controls="services-dropdown"
             >
               Services
-              <ChevronDown className="h-3.5 w-3.5" />
-            </Link>
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isServicesOpen ? "rotate-180" : "rotate-0"}`} />
+            </button>
 
-            <div className="invisible absolute left-1/2 top-full z-50 mt-3 w-[360px] -translate-x-1/2 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            <div
+              id="services-dropdown"
+              className={`absolute left-1/2 top-full z-50 mt-2 w-[360px] -translate-x-1/2 pt-2 transition duration-200 ${
+                isServicesOpen
+                  ? "visible opacity-100"
+                  : "pointer-events-none invisible opacity-0"
+              }`}
+              onMouseEnter={openDropdown}
+              onMouseLeave={closeDropdownWithDelay}
+              onClick={() => setIsServicesOpen(false)}
+              role="menu"
+              aria-label="Services menu"
+            >
               <div className="rounded-3xl border border-yellow-200/15 bg-black/90 p-3 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+                <Link
+                  href="/services"
+                  className="mb-2 block rounded-2xl border border-yellow-200/15 px-4 py-3 text-sm text-yellow-100 transition hover:bg-white/5"
+                  role="menuitem"
+                >
+                  View All Services
+                </Link>
                 <div className="grid max-h-[60vh] gap-1 overflow-auto">
                   {serviceLinks.map((service) => (
                     <Link
                       key={service.href}
                       href={service.href}
                       className="rounded-2xl px-4 py-3 text-sm text-gray-200 transition hover:bg-white/5 hover:text-yellow-100"
+                      role="menuitem"
                     >
                       {service.title}
                     </Link>
@@ -136,11 +243,69 @@ export default function Navbar() {
 
           <Link
             href="/booking"
-            className="rounded-full bg-yellow-500 px-6 py-2.5 font-medium text-black shadow-[0_8px_28px_rgba(234,179,8,0.26)] transition-all duration-300 hover:scale-[1.03] hover:bg-yellow-400 hover:shadow-[0_14px_34px_rgba(234,179,8,0.34)]"
+            className="rounded-full bg-yellow-500 px-6 py-2.5 font-medium text-black shadow-[0_8px_28px_rgba(234,179,8,0.26)] transition-all duration-300 hover:scale-[1.03] hover:bg-yellow-400 hover:shadow-[0_14px_34px_rgba(234,179,8,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70"
           >
             Book Session
           </Link>
         </nav>
+
+        <div
+          id="mobile-navigation"
+          ref={mobileMenuRef}
+          className={`absolute inset-x-4 top-[88px] rounded-3xl border border-yellow-200/15 bg-black/92 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl transition md:hidden ${
+            isMobileMenuOpen
+              ? "visible opacity-100"
+              : "pointer-events-none invisible opacity-0"
+          }`}
+        >
+          <nav className="flex flex-col gap-2" aria-label="Mobile navigation" onClick={() => setIsMobileMenuOpen(false)}>
+            {NAVIGATION.filter((item) => item.title !== "Services").map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="rounded-2xl px-4 py-3 text-sm uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5"
+              >
+                {item.title}
+              </Link>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setIsServicesOpen((current) => !current)}
+              className="mt-1 inline-flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70"
+              aria-expanded={isServicesOpen}
+              aria-controls="mobile-services-submenu"
+            >
+              Services
+              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isServicesOpen ? "rotate-180" : "rotate-0"}`} />
+            </button>
+
+            <div
+              id="mobile-services-submenu"
+              className={`overflow-hidden transition-all duration-200 ${
+                isServicesOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <div className="mt-1 grid gap-1 rounded-2xl border border-yellow-200/10 bg-white/[0.03] p-2">
+                <Link
+                  href="/services"
+                  className="rounded-xl px-3 py-2 text-sm text-yellow-100 transition hover:bg-white/5"
+                >
+                  View All Services
+                </Link>
+                {serviceLinks.map((service) => (
+                  <Link
+                    key={service.href}
+                    href={service.href}
+                    className="rounded-xl px-3 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-yellow-100"
+                  >
+                    {service.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </nav>
+        </div>
 
       </div>
     </header>

@@ -11,6 +11,7 @@ import ExperienceTimelineSection from "@/components/home/ExperienceTimelineSecti
 import InstagramGallerySection from "@/components/home/InstagramGallerySection";
 import BookingCTASection from "@/components/home/BookingCTASection";
 import Footer from "@/components/layout/Footer";
+import { portfolioCategoryOrder } from "@/constants/cloudinary-folders";
 
 export default async function Home() {
   const aboutImage = await getCloudinaryFolderImage("Hero", {
@@ -18,7 +19,7 @@ export default async function Home() {
     height: 1200,
   });
 
-  const portfolioSourceFolders = ["Weddings", "Traditional", "Engagements", "Bridal Portraits"];
+  const portfolioSourceFolders = portfolioCategoryOrder.slice(0, 4);
   const portfolioImages = await Promise.all(
     portfolioSourceFolders.map(async (folderName, index) => {
       const image = await getCloudinaryFolderImage(folderName, {
@@ -29,6 +30,7 @@ export default async function Home() {
       return {
         src: image.src,
         alt: image.alt,
+        blurDataURL: image.blurDataURL,
         title:
           index === 0
             ? "Joy & Michael"
@@ -62,6 +64,7 @@ export default async function Home() {
         ...service,
         imageSrc: image.src,
         imageAlt: image.alt,
+        imageBlurDataURL: image.blurDataURL,
       };
     })
   );
@@ -78,18 +81,21 @@ export default async function Home() {
       quote:
         "Lolah Photography exceeded every expectation. Every photograph tells a story with elegance and emotion.",
       imageSrc: testimonialImages[0]?.src ?? aboutImage.src,
+      imageBlurDataURL: testimonialImages[0]?.blurDataURL ?? aboutImage.blurDataURL,
     },
     {
       name: "Amara & Tunde",
       quote:
         "From planning to final delivery, the experience felt premium and effortless. We love every frame.",
       imageSrc: testimonialImages[1]?.src ?? aboutImage.src,
+      imageBlurDataURL: testimonialImages[1]?.blurDataURL ?? aboutImage.blurDataURL,
     },
     {
       name: "Ife & Michael",
       quote:
         "Our wedding memories were captured with such beauty and detail. The album feels timeless.",
       imageSrc: testimonialImages[2]?.src ?? aboutImage.src,
+      imageBlurDataURL: testimonialImages[2]?.blurDataURL ?? aboutImage.blurDataURL,
     },
   ];
 
@@ -101,6 +107,7 @@ export default async function Home() {
       <AboutSection
         portraitImageSrc={aboutImage.src}
         portraitImageAlt={aboutImage.alt}
+        portraitImageBlurDataURL={aboutImage.blurDataURL}
       />
       <ServicesSection services={serviceCards} />
       <WhyChooseSection />

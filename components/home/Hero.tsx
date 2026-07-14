@@ -4,29 +4,32 @@ import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 
 export default async function Hero() {
   const heroImage = await getCloudinaryFolderImage("Hero", {
-    width: 2200,
-    height: 1400,
+    width: 2400,
+    height: 1500,
   });
 
   return (
-    <section className="relative h-[110vh] min-h-[760px] w-full overflow-hidden">
+    <section className="relative min-h-[100svh] w-full overflow-hidden">
       {/* Background Image */}
       <Image
         src={heroImage.src}
         alt={heroImage.alt}
         fill
         priority
-        className="hero-zoom drift object-cover object-[72%_center] brightness-[0.76] md:object-[76%_center]"
+        sizes="100vw"
+        placeholder="blur"
+        blurDataURL={heroImage.blurDataURL}
+        className="hero-zoom object-cover object-center brightness-[0.72]"
       />
 
       {/* Cinematic Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/58 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-transparent to-blcack/30" />
-      <div className="absolute inset-0 bg-[radial-gradient(40%_45%_at_73%_38%,rgba(255,242,223,0.34)_0%,rgba(255,242,223,0.18)_25%,rgba(255,242,223,0)_62%)] mix-blend-screen" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/82 via-black/60 to-black/26" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/76 via-black/28 to-black/10" />
+      <div className="absolute inset-0 bg-[radial-gradient(42%_46%_at_72%_35%,rgba(255,242,223,0.22)_0%,rgba(255,242,223,0.1)_30%,rgba(255,242,223,0)_70%)] mix-blend-screen" />
 
       {/* Hero Content */}
-      <div className="relative z-10 flex h-full items-center justify-start px-6 md:px-10 lg:px-16">
-        <div className="max-w-3xl text-left text-white pt-24 md:pt-28">
+      <div className="relative z-10 flex min-h-[100svh] items-center justify-start px-6 pb-20 pt-32 md:px-10 md:pt-36 lg:px-16">
+        <div className="max-w-3xl text-left text-white">
           <p className="fade-in-up uppercase tracking-[6px] text-yellow-300/95 mb-4 text-sm md:text-base">
             Luxury Wedding Photographer
           </p>
@@ -50,7 +53,7 @@ export default async function Hero() {
             Based in Ibadan • Available Across Nigeria
           </p>
 
-          <div className="fade-in-up delay-600 mt-10 flex flex-col gap-5 justify-start md:flex-row">
+          <div className="fade-in-up delay-600 mt-10 flex flex-col justify-start gap-5 md:flex-row">
             <Link
               href="/booking"
               className="rounded-full bg-yellow-500 px-8 py-4 font-semibold text-black shadow-[0_10px_35px_rgba(234,179,8,0.34)] transition-all duration-300 hover:scale-[1.03] hover:bg-yellow-400 hover:shadow-[0_16px_45px_rgba(234,179,8,0.42)]"
@@ -68,7 +71,7 @@ export default async function Hero() {
         </div>
       </div>
 
-      <div className="fade-in delay-600 absolute bottom-9 left-1/2 z-20 -translate-x-1/2 text-center text-white/90">
+      <div className="fade-in delay-600 absolute bottom-7 left-1/2 z-20 -translate-x-1/2 text-center text-white/90 md:bottom-9">
         <p className="text-xs uppercase tracking-[0.34em]">Scroll to Explore</p>
         <div className="scroll-cue-bounce mt-3 mx-auto h-10 w-6 rounded-full border border-white/50 p-1">
           <span className="block h-2.5 w-2.5 rounded-full bg-yellow-300/95" />

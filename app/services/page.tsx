@@ -66,6 +66,7 @@ export default async function ServicesPage() {
         ...service,
         imageSrc: image.src,
         imageAlt: image.alt,
+        imageBlurDataURL: image.blurDataURL,
       };
     })
   );

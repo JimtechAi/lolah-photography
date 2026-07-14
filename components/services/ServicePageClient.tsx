@@ -37,6 +37,7 @@ export type GalleryImage = {
   src: string;
   alt: string;
   title: string;
+  blurDataURL?: string;
 };
 
 export type FeatureCard = {
@@ -67,6 +68,7 @@ type ServicePageClientProps = {
   title: string;
   subtitle: string;
   heroImage: string;
+  heroImageBlurDataURL?: string;
   aboutParagraphs: string[];
   featureCards: FeatureCard[];
   galleryImages: GalleryImage[];
@@ -100,6 +102,7 @@ export default function ServicePageClient({
   title,
   subtitle,
   heroImage,
+  heroImageBlurDataURL,
   aboutParagraphs,
   featureCards,
   galleryImages,
@@ -191,6 +194,8 @@ export default function ServicePageClient({
           fill
           priority
           sizes="100vw"
+          placeholder={heroImageBlurDataURL ? "blur" : "empty"}
+          blurDataURL={heroImageBlurDataURL}
           className="object-cover object-[70%_center] brightness-[0.72]"
         />
 
@@ -399,6 +404,8 @@ export default function ServicePageClient({
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       loading="lazy"
+                      placeholder={image.blurDataURL ? "blur" : "empty"}
+                      blurDataURL={image.blurDataURL}
                       className="object-cover transition duration-700 group-hover:scale-[1.06] group-hover:brightness-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
@@ -693,6 +700,8 @@ export default function ServicePageClient({
                     fill
                     sizes="100vw"
                     priority
+                    placeholder={activeImage.blurDataURL ? "blur" : "empty"}
+                    blurDataURL={activeImage.blurDataURL}
                     className="object-contain px-8 py-8 md:px-16 md:py-10"
                   />
                 </motion.div>

@@ -70,6 +70,18 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Lolah Photography | Luxury Wedding Photographer in Ibadan",
       description: siteConfig.description,
       images: [heroImage.src],
+      creator: "@lolah.photography",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
     icons: {
       icon: "/icon",
@@ -89,7 +101,7 @@ export default async function RootLayout({
     height: 630,
   });
 
-  const structuredData = {
+  const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: siteConfig.name,
@@ -106,6 +118,14 @@ export default async function RootLayout({
     sameAs: [siteConfig.instagram, siteConfig.whatsapp],
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    inLanguage: "en-NG",
+  };
+
   return (
     <html
       lang="en"
@@ -116,7 +136,13 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
+            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteJsonLd).replace(/</g, "\\u003c"),
           }}
         />
         {children}

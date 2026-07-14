@@ -10,6 +10,7 @@ type ServiceGridProps = {
     ServiceDefinition & {
       imageSrc: string;
       imageAlt: string;
+      imageBlurDataURL?: string;
     }
   >;
 };
@@ -35,6 +36,8 @@ export function ServiceGrid({ services }: ServiceGridProps) {
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
                 loading="lazy"
+                placeholder={service.imageBlurDataURL ? "blur" : "empty"}
+                blurDataURL={service.imageBlurDataURL}
                 className="object-cover transition duration-700 group-hover:scale-[1.06] group-hover:brightness-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />

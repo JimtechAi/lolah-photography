@@ -8,7 +8,10 @@ type RouteContext = {
 export async function GET(request: Request, { params }: RouteContext) {
   const resolvedParams = await params;
   const url = new URL(request.url);
-  const limit = Math.max(1, Number(url.searchParams.get("limit") || "1"));
+  const requestedLimit = Number(url.searchParams.get("limit") || "1");
+  const limit = Number.isFinite(requestedLimit)
+    ? Math.min(50, Math.max(1, Math.round(requestedLimit)))
+    : 1;
 
   try {
     const images = await getCloudinaryFolderImages(
@@ -16,7 +19,14 @@ export async function GET(request: Request, { params }: RouteContext) {
       { limit }
     );
 
-    return NextResponse.json({ images });
+    return NextResponse.json(
+      { images },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (error) {
     return NextResponse.json(
       {

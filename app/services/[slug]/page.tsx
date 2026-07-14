@@ -12,7 +12,6 @@ type ServicePageProps = {
 };
 
 export const dynamic = "force-dynamic";
-
 export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
 }
@@ -128,6 +127,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         title={service.title}
         subtitle={service.subtitle}
         heroImage={serviceGalleryImages[0].src}
+        heroImageBlurDataURL={serviceGalleryImages[0].blurDataURL}
         aboutParagraphs={service.aboutParagraphs}
         featureCards={service.featureCards}
         galleryImages={serviceGalleryImages}

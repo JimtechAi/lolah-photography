@@ -28,6 +28,7 @@ const stats: StatItem[] = [
 type AboutSectionProps = {
   portraitImageSrc: string;
   portraitImageAlt: string;
+  portraitImageBlurDataURL?: string;
 };
 
 function CountUp({ value, suffix }: { value: number; suffix: string }) {
@@ -70,6 +71,7 @@ function CountUp({ value, suffix }: { value: number; suffix: string }) {
 export default function AboutSection({
   portraitImageSrc,
   portraitImageAlt,
+  portraitImageBlurDataURL,
 }: AboutSectionProps) {
   return (
     <section
@@ -93,6 +95,8 @@ export default function AboutSection({
                 alt={portraitImageAlt}
                 width={900}
                 height={1200}
+                placeholder={portraitImageBlurDataURL ? "blur" : "empty"}
+                blurDataURL={portraitImageBlurDataURL}
                 className="h-full w-full object-cover"
               />
             </div>

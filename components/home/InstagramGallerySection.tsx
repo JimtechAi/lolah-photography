@@ -1,17 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { portfolioCategoryOrder } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 
-const galleryFolders = [
-  "Weddings",
-  "Traditional",
-  "Engagements",
-  "Bridal Portraits",
-  "Maternity",
-  "Family",
-  "Baby And Newborn",
-  "Birthday Photography",
-];
+const galleryFolders = portfolioCategoryOrder.slice(0, 8);
 
 export default async function InstagramGallerySection() {
   const images = await Promise.all(
@@ -24,6 +16,7 @@ export default async function InstagramGallerySection() {
       return {
         src: image.src,
         alt: `${folderName} preview from Lolah Photography`,
+        blurDataURL: image.blurDataURL,
       };
     })
   );
@@ -51,6 +44,8 @@ export default async function InstagramGallerySection() {
                 alt={image.alt}
                 width={700}
                 height={700}
+                placeholder={image.blurDataURL ? "blur" : "empty"}
+                blurDataURL={image.blurDataURL}
                 className="aspect-square w-full object-cover transition duration-500 group-hover:scale-[1.05] group-hover:brightness-105"
               />
             </article>

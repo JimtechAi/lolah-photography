@@ -1,6 +1,6 @@
 import "server-only";
 
-import { unstable_noStore as noStore } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 
 function readEnv(name: string) {
@@ -15,7 +15,26 @@ const apiKey = readEnv("CLOUDINARY_API_KEY");
 const apiSecret = readEnv("CLOUDINARY_API_SECRET");
 const rootFolder = "lolah photography";
 
+const folderAliases: Record<string, string> = {
+  hero: "Hero",
+  logo: "Logo",
+  weddings: "Weddings",
+  traditional: "Traditional",
+  "traditional weddings": "Traditional",
+  engagements: "Engagements",
+  "bridal portraits": "Bridal Portraits",
+  "corporate portraits": "Corporate Portraits",
+  family: "Family",
+  events: "Events",
+  maternity: "Maternity",
+  "baby and newborn": "Baby And Newborn",
+  "birthday photography": "Birthday Photography",
+  "drones photography and videography": "Drones Photography And Videography",
+  testimonials: "testimonials",
+};
+
 const localFolderFallbacks: Record<string, string[]> = {
+  Logo: ["/images/logo/logo.webp"],
   Hero: [
     "/images/hero/hero1.webp",
     "/images/hero/hero2.webp",
@@ -65,6 +84,7 @@ export type CloudinaryMediaItem = {
   alt: string;
   width: number;
   height: number;
+  blurDataURL: string;
 };
 
 export type CloudinaryMediaFolderOptions = {
@@ -80,6 +100,31 @@ type CloudinaryApiErrorLike = {
   };
   message?: string;
 };
+
+type CloudinaryResource = {
+  public_id: string;
+  display_name?: string;
+  width?: number;
+  height?: number;
+  context?: {
+    custom?: {
+      alt?: string;
+      caption?: string;
+    };
+  };
+};
+
+function normalizeFolderName(folderName: string) {
+  const cleaned = folderName.trim().replace(/\s+/g, " ");
+  const aliasKey = cleaned.toLowerCase();
+  return folderAliases[aliasKey] ?? cleaned;
+}
+
+function getBlurDataURL(baseHex: string = "1a120b") {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="24" viewBox="0 0 32 24"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b0a08" offset="0%"/><stop stop-color="#${baseHex}" offset="100%"/></linearGradient></defs><rect width="32" height="24" fill="url(#g)"/></svg>`
+  )}`;
+}
 
 function ensureCloudinaryConfig() {
   if (configured) {
@@ -102,31 +147,35 @@ function ensureCloudinaryConfig() {
 }
 
 function getFolderPath(folderName: string) {
-  return `${rootFolder}/${folderName}`;
+  return `${rootFolder}/${normalizeFolderName(folderName)}`;
 }
 
 function getPlaceholderItem(folderName: string): CloudinaryMediaItem {
+  const normalizedFolder = normalizeFolderName(folderName);
   return {
-    publicId: `${getFolderPath(folderName)}/placeholder`,
+    publicId: `${getFolderPath(normalizedFolder)}/placeholder`,
     src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b0a08" offset="0%"/><stop stop-color="#1a120b" offset="100%"/></linearGradient></defs><rect width="1600" height="1200" fill="url(#g)"/><rect x="80" y="80" width="1440" height="1040" rx="48" fill="rgba(255,255,255,0.03)" stroke="rgba(250,204,21,0.18)"/><text x="800" y="575" text-anchor="middle" fill="#fff7ea" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">New work coming soon.</text><text x="800" y="640" text-anchor="middle" fill="#d1d5db" font-family="Arial, Helvetica, sans-serif" font-size="24">${folderName}</text></svg>`
     )}`,
     alt: "New work coming soon.",
     width: 1600,
     height: 1200,
+    blurDataURL: getBlurDataURL(),
   };
 }
 
 function getLocalFallbackItems(folderName: string): CloudinaryMediaItem[] {
+  const normalizedFolder = normalizeFolderName(folderName);
   const fallbackSources =
-    localFolderFallbacks[folderName] ?? localFolderFallbacks.default;
+    localFolderFallbacks[normalizedFolder] ?? localFolderFallbacks.default;
 
   return fallbackSources.map((src, index) => ({
-    publicId: `${getFolderPath(folderName)}/local-fallback-${index + 1}`,
+    publicId: `${getFolderPath(normalizedFolder)}/local-fallback-${index + 1}`,
     src,
-    alt: `${folderName} preview`,
+    alt: `${normalizedFolder} preview`,
     width: 1600,
     height: 1200,
+    blurDataURL: getBlurDataURL(),
   }));
 }
 
@@ -152,6 +201,7 @@ export function buildCloudinaryImageUrl(
       {
         fetch_format: "auto",
         quality: "auto",
+        dpr: "auto",
         crop: "fill",
         gravity: "auto",
         width: options.width,
@@ -176,21 +226,30 @@ export async function getCloudinaryFolderImages(
   folderName: string,
   options: CloudinaryMediaFolderOptions = {}
 ): Promise<CloudinaryMediaItem[]> {
-  noStore();
+  const normalizedFolder = normalizeFolderName(folderName);
 
   if (!ensureCloudinaryConfig()) {
-    return getFallbackItems(folderName, options.limit ?? 500);
+    return getFallbackItems(normalizedFolder, options.limit ?? 500);
   }
 
-  const folderPath = getFolderPath(folderName);
-  let response: { resources?: Array<any> };
+  const folderPath = getFolderPath(normalizedFolder);
+  const maxResults = options.limit ?? 500;
+
+  const getCachedFolderResources = unstable_cache(
+    async (assetFolderPath: string, resultLimit: number) =>
+      cloudinary.api.resources_by_asset_folder(assetFolderPath, {
+        resource_type: "image",
+        type: "upload",
+        max_results: resultLimit,
+      }),
+    ["cloudinary-folder-images"],
+    { revalidate: 300 }
+  );
+
+  let response: { resources?: CloudinaryResource[] };
 
   try {
-    response = await cloudinary.api.resources_by_asset_folder(folderPath, {
-      resource_type: "image",
-      type: "upload",
-      max_results: options.limit ?? 500,
-    });
+    response = await getCachedFolderResources(folderPath, maxResults);
   } catch (error) {
     const cloudinaryError = error as CloudinaryApiErrorLike;
     const errorCode = cloudinaryError.error?.http_code;
@@ -198,7 +257,7 @@ export async function getCloudinaryFolderImages(
       cloudinaryError.error?.message || cloudinaryError.message || "";
 
     if (errorCode === 404 || errorMessage.includes("Folder doesn't exist")) {
-      return getFallbackItems(folderName, options.limit ?? 500);
+      return getFallbackItems(normalizedFolder, maxResults);
     }
 
     throw new Error(errorMessage || "Unable to load Cloudinary assets.");
@@ -207,15 +266,13 @@ export async function getCloudinaryFolderImages(
   const resources = response.resources ?? [];
 
   if (!resources.length) {
-    return getFallbackItems(folderName, options.limit ?? 500);
+    return getFallbackItems(normalizedFolder, maxResults);
   }
 
   return resources.map((resource) => {
     const width = resource.width || options.width || 1600;
     const height = resource.height || options.height || 1200;
-    const context = resource.context as
-      | { custom?: { alt?: string; caption?: string } }
-      | undefined;
+    const context = resource.context;
 
     return {
       publicId: resource.public_id,
@@ -225,9 +282,10 @@ export async function getCloudinaryFolderImages(
         context?.custom?.caption ||
         resource.display_name ||
         resource.public_id.split("/").pop()?.replace(/[-_]/g, " ") ||
-        `${folderName} image`,
+        `${normalizedFolder} image`,
       width,
       height,
+      blurDataURL: getBlurDataURL(),
     };
   });
 }

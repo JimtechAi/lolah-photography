@@ -10,6 +10,7 @@ type ServicesSectionProps = {
     ServiceDefinition & {
       imageSrc: string;
       imageAlt: string;
+      imageBlurDataURL?: string;
     }
   >;
 };

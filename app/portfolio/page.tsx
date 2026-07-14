@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import PortfolioGallery from "@/components/portfolio/PortfolioGallery";
+import { portfolioCategoryOrder } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage, getCloudinaryFolderImages } from "@/lib/cloudinary-media";
 import { siteConfig } from "@/lib/site";
 
@@ -52,17 +53,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PortfolioPage() {
-  const curatedFolders = [
-    "Weddings",
-    "Traditional",
-    "Engagements",
-    "Bridal Portraits",
-    "Maternity",
-    "Family",
-  ];
-
   const folderImages = await Promise.all(
-    curatedFolders.map(async (folderName) => {
+    portfolioCategoryOrder.map(async (folderName) => {
       const images = await getCloudinaryFolderImages(folderName, {
         limit: 1,
         width: 900,
@@ -72,6 +64,7 @@ export default async function PortfolioPage() {
       return {
         src: images[0].src,
         alt: images[0].alt,
+        blurDataURL: images[0].blurDataURL,
       };
     })
   );

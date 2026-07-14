@@ -9,6 +9,7 @@ type Testimonial = {
   name: string;
   quote: string;
   imageSrc: string;
+  imageBlurDataURL?: string;
 };
 
 type TestimonialsSectionProps = {
@@ -68,6 +69,8 @@ export default function TestimonialsSection({
               alt={current.name}
               width={1000}
               height={1200}
+              placeholder={current.imageBlurDataURL ? "blur" : "empty"}
+              blurDataURL={current.imageBlurDataURL}
               className="h-full w-full min-h-[380px] object-cover md:min-h-[460px]"
             />
           </article>
