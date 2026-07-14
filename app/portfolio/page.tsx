@@ -21,12 +21,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Portfolio",
     description:
-      "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
+      "Browse our curated photography collections including weddings, engagements, portraits, family sessions, and special events from Lolah Photography.",
     keywords: [
       "Lolah Photography portfolio",
-      "wedding photography portfolio",
+      "photography portfolio",
       "luxury portrait gallery",
-      "wedding stories",
+      "photography collections",
     ],
     alternates: {
       canonical: "/portfolio",
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: "Portfolio | Lolah Photography",
       description:
-        "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
+        "Browse our curated photography collections including weddings, engagements, portraits, family sessions, and special events from Lolah Photography.",
       url: "/portfolio",
       siteName: siteConfig.name,
       locale: "en_NG",
@@ -52,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: "Portfolio | Lolah Photography",
       description:
-        "Browse curated wedding stories, elegant portraits, and celebration imagery from Lolah Photography.",
+        "Browse our curated photography collections including weddings, engagements, portraits, family sessions, and special events from Lolah Photography.",
       images: [heroImage.src],
     },
   };
@@ -91,13 +91,14 @@ export default async function PortfolioPage() {
             </p>
 
             <h1 className="fade-in-up delay-150 mt-4 max-w-4xl font-serif text-4xl leading-tight text-[#fff8ed] md:text-6xl lg:text-7xl">
-              Curated Wedding Stories, Crafted with Emotion and Elegance
+              Explore Our Photography Collections
             </h1>
 
             <p className="fade-in-up delay-300 mt-7 max-w-2xl text-base leading-relaxed text-gray-300 md:text-lg">
-              Explore a selection of our favorite frames, from quiet intimate
-              portraits to cinematic celebration moments. Every gallery is
-              designed to preserve your day with timeless artistry.
+              Discover a selection of our finest work across weddings,
+              engagements, portraits, family sessions, and special events.
+              Every gallery is designed to preserve life's most meaningful
+              moments with timeless artistry.
             </p>
           </div>
         </section>

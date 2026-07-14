@@ -27,7 +27,7 @@ export default function ServicesSection({ services }: ServicesSectionProps) {
         </motion.p>
 
         <motion.h2 className="mt-4 font-serif text-4xl leading-tight text-[#fff8ed] md:text-6xl" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.65, delay: 0.08, ease: "easeOut" }}>
-          Crafted Coverage for Every Celebration
+          Comprehensive Photography Services
         </motion.h2>
 
         <div className="mt-12">

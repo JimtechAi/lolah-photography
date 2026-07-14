@@ -114,7 +114,7 @@ export default function BookingForm({
 
       <form className="mt-6 grid gap-5" onSubmit={handleSubmit}>
         <div className="grid gap-5 md:grid-cols-2">
-          <FormField label="Bride Name" name="brideName" required>
+          <FormField label="First Name" name="brideName" required>
             <input
               id="brideName"
               name="brideName"
@@ -123,11 +123,11 @@ export default function BookingForm({
               value={formData.brideName}
               onChange={handleChange}
               className={inputClassName}
-              placeholder="Bride's full name"
+              placeholder="Your first name"
             />
           </FormField>
 
-          <FormField label="Groom Name" name="groomName" required>
+          <FormField label="Last Name" name="groomName" required>
             <input
               id="groomName"
               name="groomName"
@@ -136,7 +136,7 @@ export default function BookingForm({
               value={formData.groomName}
               onChange={handleChange}
               className={inputClassName}
-              placeholder="Groom's full name"
+              placeholder="Your last name"
             />
           </FormField>
 
@@ -166,7 +166,7 @@ export default function BookingForm({
             />
           </FormField>
 
-          <FormField label="Wedding Type" name="weddingType" required>
+          <FormField label="Photography Booking" name="weddingType" required>
             <select
               id="weddingType"
               name="weddingType"
@@ -183,7 +183,7 @@ export default function BookingForm({
             </select>
           </FormField>
 
-          <FormField label="Wedding Date" name="weddingDate" required>
+          <FormField label="Preferred Date" name="weddingDate" required>
             <input
               id="weddingDate"
               name="weddingDate"
@@ -195,7 +195,7 @@ export default function BookingForm({
             />
           </FormField>
 
-          <FormField label="Venue" name="eventVenue" required>
+          <FormField label="Location / Venue" name="eventVenue" required>
             <input
               id="eventVenue"
               name="eventVenue"
@@ -205,19 +205,6 @@ export default function BookingForm({
               onChange={handleChange}
               className={inputClassName}
               placeholder="City, venue, or destination"
-            />
-          </FormField>
-
-          <FormField label="Budget" name="budget" required>
-            <input
-              id="budget"
-              name="budget"
-              type="text"
-              required
-              value={formData.budget}
-              onChange={handleChange}
-              className={inputClassName}
-              placeholder="e.g. ₦2,500,000"
             />
           </FormField>
         </div>

@@ -6,7 +6,6 @@ export type BookingFormData = {
   weddingDate: string;
   eventVenue: string;
   weddingType: string;
-  budget: string;
   message: string;
 };
 
@@ -17,16 +16,20 @@ export const initialBookingFormData: BookingFormData = {
   phoneNumber: "",
   weddingDate: "",
   eventVenue: "",
-  weddingType: "White Wedding",
-  budget: "",
+  weddingType: "Wedding Photography",
   message: "",
 };
 
 export const weddingTypes = [
-  "White Wedding",
+  "Wedding Photography",
   "Traditional Wedding",
-  "Court Wedding",
-  "Destination Wedding",
-  "Wedding Weekend",
-  "Other",
+  "Engagement Session",
+  "Bridal Portrait",
+  "Maternity",
+  "Baby & Newborn",
+  "Family Portrait",
+  "Birthday Photography",
+  "Corporate Portrait",
+  "Event Coverage",
+  "Drone Photography & Videography",
 ];

@@ -32,22 +32,24 @@ export default async function Hero() {
       <div className="relative z-10 flex min-h-[100svh] items-center justify-start px-6 pb-20 pt-32 md:px-10 md:pt-36 lg:px-16">
         <div className="max-w-3xl text-left text-white">
           <p className="fade-in-up uppercase tracking-[6px] text-yellow-300/95 mb-4 text-sm md:text-base">
-            Luxury Wedding Photographer
+            Luxury Photography Studio
           </p>
 
           <h1 className="fade-in-up delay-150 max-w-[660px] font-serif text-5xl md:text-7xl lg:text-[5.3rem] font-semibold leading-[1.08] tracking-[0.01em] text-[#fff9ee]">
-            Capturing Timeless
+            Capturing Life's Most
             <br />
-            Love Stories
+            Meaningful Moments
           </h1>
 
           <p className="fade-in-up delay-300 mt-6 max-w-xl text-lg text-gray-200/95">
-            Elegant wedding photography crafted with emotion, artistry, and
-            cinematic storytelling.
+            From weddings and engagements to maternity, newborn, family,
+            birthdays, corporate portraits and special events, Lolah Photography
+            creates timeless imagery with elegance, emotion and cinematic
+            storytelling.
           </p>
 
           <p className="fade-in-up delay-450 mt-5 text-sm uppercase tracking-[0.2em] text-yellow-100/90">
-            ★★★★★ Trusted by 300+ Happy Couples Across Nigeria
+            ★★★★★ Trusted by 300+ Happy Clients Across Nigeria
           </p>
 
           <p className="fade-in-up delay-450 mt-2 text-sm text-gray-300">

@@ -81,7 +81,6 @@ function normalizeBookingPayload(body: BookingPayload) {
     weddingDate: body.weddingDate?.trim() || "",
     eventVenue: body.eventVenue?.trim() || "",
     weddingType: body.weddingType?.trim() || "",
-    budget: body.budget?.trim() || "",
     message: body.message?.trim() || "",
   };
 
@@ -93,14 +92,13 @@ function normalizeBookingPayload(body: BookingPayload) {
 function createPlainTextEmail(booking: NonNullable<ReturnType<typeof normalizeBookingPayload>>) {
   return [
     "New Booking Request",
-    `Bride Name: ${booking.brideName}`,
-    `Groom Name: ${booking.groomName}`,
+    `First Name: ${booking.brideName}`,
+    `Last Name: ${booking.groomName}`,
     `Email: ${booking.email}`,
     `Phone: ${booking.phoneNumber}`,
-    `Wedding Date: ${booking.weddingDate}`,
-    `Venue: ${booking.eventVenue}`,
-    `Wedding Type: ${booking.weddingType}`,
-    `Budget: ${booking.budget}`,
+    `Preferred Date: ${booking.weddingDate}`,
+    `Location / Venue: ${booking.eventVenue}`,
+    `Photography Booking: ${booking.weddingType}`,
     "Message:",
     booking.message,
   ].join("\n");
@@ -108,14 +106,13 @@ function createPlainTextEmail(booking: NonNullable<ReturnType<typeof normalizeBo
 
 function createHtmlEmail(booking: NonNullable<ReturnType<typeof normalizeBookingPayload>>) {
   const rows = [
-    ["Bride Name", booking.brideName],
-    ["Groom Name", booking.groomName],
+    ["First Name", booking.brideName],
+    ["Last Name", booking.groomName],
     ["Email", booking.email],
     ["Phone", booking.phoneNumber],
-    ["Wedding Date", booking.weddingDate],
-    ["Venue", booking.eventVenue],
-    ["Wedding Type", booking.weddingType],
-    ["Budget", booking.budget],
+    ["Preferred Date", booking.weddingDate],
+    ["Location / Venue", booking.eventVenue],
+    ["Photography Booking", booking.weddingType],
   ]
     .map(
       ([label, value]) =>

@@ -9,14 +9,14 @@ import { siteConfig } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Send a wedding inquiry to Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
+    "Book a photography session with Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
   alternates: {
     canonical: "/contact",
   },
   openGraph: {
     title: "Contact | Lolah Photography",
     description:
-      "Send a wedding inquiry to Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
+      "Book a photography session with Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
     url: `${siteConfig.url}/contact`,
     siteName: siteConfig.name,
     locale: "en_NG",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Contact | Lolah Photography",
     description:
-      "Send a wedding inquiry to Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
+      "Book a photography session with Lolah Photography or reach out directly by phone, WhatsApp, Instagram, email, or office visit.",
   },
 };
 
@@ -68,11 +68,12 @@ export default function ContactPage() {
               Let&apos;s Talk
             </p>
             <h1 className="mt-5 font-serif text-4xl leading-tight text-[#fff7ea] md:text-6xl">
-              Wedding Inquiry Form
+              Let's Capture Your Next Special Moment
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-300 md:text-lg">
-              Share the details of your celebration and Lolah will respond with
-              availability, guidance, and the best next step for your day.
+              Whether you're planning a wedding, birthday celebration, maternity
+              session, family portrait, corporate branding shoot, baby photoshoot
+              or special event, we'd love to hear about your vision.
             </p>
 
             <div className="mt-10">
