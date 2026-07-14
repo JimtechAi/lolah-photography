@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
+ 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
