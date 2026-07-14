@@ -1,4 +1,4 @@
-import { getCloudinaryFolderImage, getCloudinaryFolderImages } from "@/lib/cloudinary-media";
+import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 import { featuredServices } from "@/lib/services";
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
@@ -11,10 +11,10 @@ import ExperienceTimelineSection from "@/components/home/ExperienceTimelineSecti
 import InstagramGallerySection from "@/components/home/InstagramGallerySection";
 import BookingCTASection from "@/components/home/BookingCTASection";
 import Footer from "@/components/layout/Footer";
-import { portfolioCategoryOrder } from "@/constants/cloudinary-folders";
+import { cloudinaryFolderMap, portfolioCategoryOrder } from "@/constants/cloudinary-folders";
 
 export default async function Home() {
-  const aboutImage = await getCloudinaryFolderImage("Hero", {
+  const aboutImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 900,
     height: 1200,
   });
@@ -69,33 +69,37 @@ export default async function Home() {
     })
   );
 
-  const testimonialImages = await getCloudinaryFolderImages("testimonials", {
-    limit: 3,
-    width: 1000,
-    height: 1200,
-  });
+  const testimonialFolders = portfolioCategoryOrder.slice(0, 3);
+  const testimonialImages = await Promise.all(
+    testimonialFolders.map((folderName) =>
+      getCloudinaryFolderImage(folderName, {
+        width: 1000,
+        height: 1200,
+      })
+    )
+  );
 
   const testimonials = [
     {
       name: "Sarah & David",
       quote:
         "Lolah Photography exceeded every expectation. Every photograph tells a story with elegance and emotion.",
-      imageSrc: testimonialImages[0]?.src ?? aboutImage.src,
-      imageBlurDataURL: testimonialImages[0]?.blurDataURL ?? aboutImage.blurDataURL,
+      imageSrc: testimonialImages[0].src,
+      imageBlurDataURL: testimonialImages[0].blurDataURL,
     },
     {
       name: "Amara & Tunde",
       quote:
         "From planning to final delivery, the experience felt premium and effortless. We love every frame.",
-      imageSrc: testimonialImages[1]?.src ?? aboutImage.src,
-      imageBlurDataURL: testimonialImages[1]?.blurDataURL ?? aboutImage.blurDataURL,
+      imageSrc: testimonialImages[1].src,
+      imageBlurDataURL: testimonialImages[1].blurDataURL,
     },
     {
       name: "Ife & Michael",
       quote:
         "Our wedding memories were captured with such beauty and detail. The album feels timeless.",
-      imageSrc: testimonialImages[2]?.src ?? aboutImage.src,
-      imageBlurDataURL: testimonialImages[2]?.blurDataURL ?? aboutImage.blurDataURL,
+      imageSrc: testimonialImages[2].src,
+      imageBlurDataURL: testimonialImages[2].blurDataURL,
     },
   ];
 

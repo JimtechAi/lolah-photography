@@ -1,4 +1,5 @@
 import type { FaqItem, FeatureCard, GalleryImage, TestimonialItem, TimelineStep } from "@/components/services/ServicePageClient";
+import { getCloudinaryFolderByServiceSlug } from "@/constants/cloudinary-folders";
 
 export type ServiceSlug =
   | "weddings"
@@ -33,7 +34,6 @@ export type ServiceDefinition = {
 type ServiceDefinitionSeed = {
   title: string;
   shortTitle: string;
-  folderName: string;
   subtitle: string;
   themeLabel: string;
   keywords: string[];
@@ -43,7 +43,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   weddings: {
     title: "Wedding Photography",
     shortTitle: "Weddings",
-    folderName: "Weddings",
     subtitle:
       "Elegant wedding storytelling designed to preserve every emotion, every detail, and every unforgettable moment.",
     themeLabel: "Wedding Stories",
@@ -52,7 +51,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   "traditional-weddings": {
     title: "Traditional Wedding Photography",
     shortTitle: "Traditional Weddings",
-    folderName: "Traditional",
     subtitle:
       "Rich cultural storytelling that honors heritage, family, and the beauty of a deeply meaningful celebration.",
     themeLabel: "Cultural Celebration",
@@ -61,7 +59,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   engagements: {
     title: "Engagement Photography",
     shortTitle: "Engagements",
-    folderName: "Engagements",
     subtitle:
       "Romantic imagery shaped around connection, anticipation, and the quiet excitement before the big day.",
     themeLabel: "Pre-Wedding Romance",
@@ -70,7 +67,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   "bridal-portraits": {
     title: "Bridal Portrait Photography",
     shortTitle: "Bridal Portraits",
-    folderName: "Bridal Portraits",
     subtitle:
       "Refined bridal imagery that celebrates beauty, grace, and the luminous stillness before the ceremony begins.",
     themeLabel: "Editorial Bridal",
@@ -79,7 +75,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   maternity: {
     title: "Maternity Photography",
     shortTitle: "Maternity",
-    folderName: "Maternity",
     subtitle:
       "Soft, elegant maternity imagery that celebrates anticipation, tenderness, and the beauty of becoming.",
     themeLabel: "Expecting Motherhood",
@@ -88,7 +83,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   "baby-newborn": {
     title: "Baby & Newborn Photography",
     shortTitle: "Baby & Newborn",
-    folderName: "Baby And Newborn",
     subtitle:
       "Gentle newborn and baby portraits created with warmth, patience, and an heirloom-quality finish.",
     themeLabel: "Tiny Heirlooms",
@@ -97,7 +91,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   family: {
     title: "Family Photography",
     shortTitle: "Family",
-    folderName: "Family",
     subtitle:
       "Joyful family portraits that feel natural, connected, and timeless enough to live on for generations.",
     themeLabel: "Family Legacy",
@@ -106,7 +99,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   birthday: {
     title: "Birthday Photography",
     shortTitle: "Birthday",
-    folderName: "Birthday Photography",
     subtitle:
       "Luxury birthday coverage that turns milestone celebrations into vivid, stylish, and memorable keepsakes.",
     themeLabel: "Milestone Events",
@@ -115,7 +107,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   "corporate-portraits": {
     title: "Corporate Portrait Photography",
     shortTitle: "Corporate Portraits",
-    folderName: "Corporate Portraits",
     subtitle:
       "Professional portraiture for leaders, creatives, and brands that want a premium visual presence.",
     themeLabel: "Executive Portraiture",
@@ -124,7 +115,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   events: {
     title: "Corporate Event Photography",
     shortTitle: "Events",
-    folderName: "Events",
     subtitle:
       "High-end corporate and private event coverage delivered with discretion, polish, and cinematic perspective.",
     themeLabel: "Corporate Coverage",
@@ -133,7 +123,6 @@ const serviceSeeds: Record<ServiceSlug, ServiceDefinitionSeed> = {
   "drone-photography": {
     title: "Drone Photography & Videography",
     shortTitle: "Drone",
-    folderName: "Drones Photography And Videography",
     subtitle:
       "Aerial visuals that add scale, drama, and a cinematic sense of place to premium productions and events.",
     themeLabel: "Aerial Storytelling",
@@ -192,6 +181,11 @@ function buildTestimonials(title: string): TestimonialItem[] {
 
 function createServiceDefinition(slug: ServiceSlug): ServiceDefinition {
   const seed = serviceSeeds[slug];
+  const folderName = getCloudinaryFolderByServiceSlug(slug);
+
+  if (!folderName) {
+    throw new Error(`Missing Cloudinary folder mapping for service slug: ${slug}`);
+  }
 
   return {
     slug,
@@ -199,7 +193,7 @@ function createServiceDefinition(slug: ServiceSlug): ServiceDefinition {
     shortTitle: seed.shortTitle,
     subtitle: seed.subtitle,
     description: seed.subtitle,
-    folderName: seed.folderName,
+    folderName,
     themeLabel: seed.themeLabel,
     keywords: [
       ...seed.keywords,

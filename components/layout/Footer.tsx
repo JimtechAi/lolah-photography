@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AtSign, Mail, Phone, MapPin } from "lucide-react";
 import CloudinaryLogo from "@/components/ui/CloudinaryLogo";
+import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 
 const quickLinks = [
   { title: "Home", href: "/" },
@@ -17,7 +18,7 @@ export default function Footer() {
         <div>
           <Link href="/" className="inline-flex items-center">
             <CloudinaryLogo
-              folderName="Logo"
+              folderName={cloudinaryFolderMap.logo}
               alt="Lolah Photography logo"
               width={94}
               height={94}

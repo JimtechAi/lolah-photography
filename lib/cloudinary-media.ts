@@ -30,50 +30,6 @@ const folderAliases: Record<string, string> = {
   "baby and newborn": "Baby And Newborn",
   "birthday photography": "Birthday Photography",
   "drones photography and videography": "Drones Photography And Videography",
-  testimonials: "testimonials",
-};
-
-const localFolderFallbacks: Record<string, string[]> = {
-  Logo: ["/images/logo/logo.webp"],
-  Hero: [
-    "/images/hero/hero1.webp",
-    "/images/hero/hero2.webp",
-    "/images/hero/hero3.webp",
-  ],
-  Weddings: [
-    "/images/portfolio/portfolio1.webp",
-    "/images/portfolio/portfolio2.webp",
-    "/images/portfolio/portfolio3.webp",
-  ],
-  Traditional: [
-    "/images/portfolio/portfolio2.webp",
-    "/images/portfolio/portfolio4.webp",
-  ],
-  Engagements: [
-    "/images/portfolio/portfolio3.webp",
-    "/images/portfolio/portfolio5.webp",
-  ],
-  "Bridal Portraits": [
-    "/images/lolah/lolah.webp",
-    "/images/lolah/lolah1.webp.jpeg",
-  ],
-  Maternity: ["/images/lolah/lolah1.webp.jpeg"],
-  Family: ["/images/portfolio/portfolio6.webp"],
-  "Baby And Newborn": ["/images/lolah/lolah.webp.jpeg"],
-  "Birthday Photography": ["/images/portfolio/portfolio4.webp"],
-  "Corporate Portraits": ["/images/lolah/lolah.webp"],
-  Events: ["/images/portfolio/portfolio5.webp"],
-  "Drones Photography And Videography": ["/images/portfolio/portfolio6.webp"],
-  testimonials: [
-    "/images/lolah/lolah.webp",
-    "/images/portfolio/portfolio1.webp",
-    "/images/portfolio/portfolio2.webp",
-  ],
-  default: [
-    "/images/hero/hero1.webp",
-    "/images/portfolio/portfolio1.webp",
-    "/images/lolah/lolah.webp",
-  ],
 };
 
 let configured = false;
@@ -146,54 +102,31 @@ function ensureCloudinaryConfig() {
   return true;
 }
 
+function ensureCloudinaryConfigOrThrow() {
+  if (ensureCloudinaryConfig()) {
+    return;
+  }
+
+  const missing = [
+    !cloudName ? "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME" : null,
+    !apiKey ? "CLOUDINARY_API_KEY" : null,
+    !apiSecret ? "CLOUDINARY_API_SECRET" : null,
+  ].filter((item): item is string => Boolean(item));
+
+  const message = `[Cloudinary] Missing required environment variables: ${missing.join(", ")}`;
+  console.error(message);
+  throw new Error(message);
+}
+
 function getFolderPath(folderName: string) {
   return `${rootFolder}/${normalizeFolderName(folderName)}`;
-}
-
-function getPlaceholderItem(folderName: string): CloudinaryMediaItem {
-  const normalizedFolder = normalizeFolderName(folderName);
-  return {
-    publicId: `${getFolderPath(normalizedFolder)}/placeholder`,
-    src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b0a08" offset="0%"/><stop stop-color="#1a120b" offset="100%"/></linearGradient></defs><rect width="1600" height="1200" fill="url(#g)"/><rect x="80" y="80" width="1440" height="1040" rx="48" fill="rgba(255,255,255,0.03)" stroke="rgba(250,204,21,0.18)"/><text x="800" y="575" text-anchor="middle" fill="#fff7ea" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">New work coming soon.</text><text x="800" y="640" text-anchor="middle" fill="#d1d5db" font-family="Arial, Helvetica, sans-serif" font-size="24">${folderName}</text></svg>`
-    )}`,
-    alt: "New work coming soon.",
-    width: 1600,
-    height: 1200,
-    blurDataURL: getBlurDataURL(),
-  };
-}
-
-function getLocalFallbackItems(folderName: string): CloudinaryMediaItem[] {
-  const normalizedFolder = normalizeFolderName(folderName);
-  const fallbackSources =
-    localFolderFallbacks[normalizedFolder] ?? localFolderFallbacks.default;
-
-  return fallbackSources.map((src, index) => ({
-    publicId: `${getFolderPath(normalizedFolder)}/local-fallback-${index + 1}`,
-    src,
-    alt: `${normalizedFolder} preview`,
-    width: 1600,
-    height: 1200,
-    blurDataURL: getBlurDataURL(),
-  }));
-}
-
-function getFallbackItems(folderName: string, limit: number) {
-  const items = getLocalFallbackItems(folderName);
-  return items.length ? items.slice(0, limit) : [getPlaceholderItem(folderName)];
 }
 
 export function buildCloudinaryImageUrl(
   publicId: string,
   options: { width?: number; height?: number } = {}
 ) {
-  if (!ensureCloudinaryConfig()) {
-    return (
-      getLocalFallbackItems("default")[0]?.src ??
-      getPlaceholderItem("Portfolio").src
-    );
-  }
+  ensureCloudinaryConfigOrThrow();
 
   return cloudinary.url(publicId, {
     secure: true,
@@ -212,12 +145,7 @@ export function buildCloudinaryImageUrl(
 }
 
 export function buildCloudinaryRawUrl(publicId: string) {
-  if (!ensureCloudinaryConfig()) {
-    return (
-      getLocalFallbackItems("default")[0]?.src ??
-      getPlaceholderItem("Portfolio").src
-    );
-  }
+  ensureCloudinaryConfigOrThrow();
 
   return cloudinary.url(publicId, { secure: true });
 }
@@ -227,13 +155,14 @@ export async function getCloudinaryFolderImages(
   options: CloudinaryMediaFolderOptions = {}
 ): Promise<CloudinaryMediaItem[]> {
   const normalizedFolder = normalizeFolderName(folderName);
-
-  if (!ensureCloudinaryConfig()) {
-    return getFallbackItems(normalizedFolder, options.limit ?? 500);
-  }
-
   const folderPath = getFolderPath(normalizedFolder);
   const maxResults = options.limit ?? 500;
+
+  if (maxResults <= 0) {
+    return [];
+  }
+
+  ensureCloudinaryConfigOrThrow();
 
   const getCachedFolderResources = unstable_cache(
     async (assetFolderPath: string, resultLimit: number) =>
@@ -254,22 +183,34 @@ export async function getCloudinaryFolderImages(
     const cloudinaryError = error as CloudinaryApiErrorLike;
     const errorCode = cloudinaryError.error?.http_code;
     const errorMessage =
-      cloudinaryError.error?.message || cloudinaryError.message || "";
+      cloudinaryError.error?.message || cloudinaryError.message || "Unknown Cloudinary error";
 
-    if (errorCode === 404 || errorMessage.includes("Folder doesn't exist")) {
-      return getFallbackItems(normalizedFolder, maxResults);
-    }
+    const message =
+      `[Cloudinary] Failed to load images for "${folderPath}"` +
+      `${errorCode ? ` (HTTP ${errorCode})` : ""}: ${errorMessage}`;
 
-    throw new Error(errorMessage || "Unable to load Cloudinary assets.");
+    console.error(message);
+    throw new Error(message);
   }
 
   const resources = response.resources ?? [];
 
   if (!resources.length) {
-    return getFallbackItems(normalizedFolder, maxResults);
+    const message = `[Cloudinary] No images found in folder "${folderPath}".`;
+    console.error(message);
+    throw new Error(message);
   }
 
-  return resources.map((resource) => {
+  const sortedResources = resources
+    .slice()
+    .sort((a, b) =>
+      a.public_id.localeCompare(b.public_id, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    );
+
+  return sortedResources.map((resource) => {
     const width = resource.width || options.width || 1600;
     const height = resource.height || options.height || 1200;
     const context = resource.context;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Manrope, Playfair_Display } from "next/font/google";
 import BrandLoader from "@/components/ui/BrandLoader";
 import FloatingSocial from "@/components/ui/FloatingSocial";
+import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -23,7 +24,7 @@ const playfair = Playfair_Display({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const heroImage = await getCloudinaryFolderImage("Hero", {
+  const heroImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 1200,
     height: 630,
   });
@@ -96,7 +97,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const heroImage = await getCloudinaryFolderImage("Hero", {
+  const heroImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 1200,
     height: 630,
   });

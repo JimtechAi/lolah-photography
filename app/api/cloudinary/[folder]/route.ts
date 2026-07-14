@@ -28,11 +28,19 @@ export async function GET(request: Request, { params }: RouteContext) {
       }
     );
   } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unable to load Cloudinary assets.";
+    console.error(
+      `[API /api/cloudinary/${decodeURIComponent(
+        resolvedParams.folder
+      )}] ${message}`,
+      error
+    );
+
     return NextResponse.json(
       {
         images: [],
-        error:
-          error instanceof Error ? error.message : "Unable to load Cloudinary assets.",
+        error: message,
       },
       { status: 500 }
     );

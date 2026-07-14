@@ -42,6 +42,15 @@ export default function CloudinaryLogo({
         );
 
         if (!response.ok) {
+          const payload = (await response.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          console.error(
+            `[CloudinaryLogo] Failed to load folder "${folderName}" (HTTP ${response.status})${
+              payload?.error ? `: ${payload.error}` : ""
+            }`
+          );
+
           if (isMounted) {
             setImage(null);
           }
@@ -50,10 +59,25 @@ export default function CloudinaryLogo({
 
         const data = (await response.json()) as { images?: CloudinaryImage[] };
 
+        if (!data.images?.length) {
+          console.error(
+            `[CloudinaryLogo] Folder "${folderName}" returned no images.`
+          );
+        }
+
         if (isMounted) {
           setImage(data.images?.[0] ?? null);
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+
+        console.error(
+          `[CloudinaryLogo] Request failed for folder "${folderName}":`,
+          error
+        );
+
         if (isMounted) {
           setImage(null);
         }

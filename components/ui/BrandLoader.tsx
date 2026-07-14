@@ -6,20 +6,18 @@ import { useEffect, useState } from "react";
 const storageKey = "lolah-loader-seen";
 
 export default function BrandLoader() {
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
+  const [visible, setVisible] = useState(false);
 
+  useEffect(() => {
     const hasSeenLoader = window.sessionStorage.getItem(storageKey) === "true";
 
     if (hasSeenLoader) {
-      return false;
+      return;
     }
 
     window.sessionStorage.setItem(storageKey, "true");
-    return true;
-  });
+    setVisible(true);
+  }, []);
 
   useEffect(() => {
     if (!visible) {

@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { ServiceGrid } from "@/components/services/ServiceGrid";
+import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 import { featuredServices } from "@/lib/services";
 import { siteConfig } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const heroImage = await getCloudinaryFolderImage("Hero", {
+  const heroImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 1200,
     height: 630,
   });

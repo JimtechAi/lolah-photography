@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 import { NAVIGATION } from "@/constants/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { services } from "@/lib/services";
@@ -148,7 +149,7 @@ export default function Navbar() {
           aria-label="Go to homepage"
         >
           <CloudinaryLogo
-            folderName="Logo"
+            folderName={cloudinaryFolderMap.logo}
             alt="Lolah Photography"
             width={80}
             height={80}
@@ -173,6 +174,10 @@ export default function Navbar() {
             <Link
               key={item.title}
               href={item.href}
+              onClick={() => {
+                setIsServicesOpen(false);
+                setIsMobileMenuOpen(false);
+              }}
               className={getNavLinkClassName(
                 item.href === "/"
                   ? isHomeActive
@@ -220,6 +225,7 @@ export default function Navbar() {
               <div className="rounded-3xl border border-yellow-200/15 bg-black/90 p-3 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl">
                 <Link
                   href="/services"
+                  onClick={() => setIsServicesOpen(false)}
                   className="mb-2 block rounded-2xl border border-yellow-200/15 px-4 py-3 text-sm text-yellow-100 transition hover:bg-white/5"
                   role="menuitem"
                 >
@@ -230,6 +236,7 @@ export default function Navbar() {
                     <Link
                       key={service.href}
                       href={service.href}
+                      onClick={() => setIsServicesOpen(false)}
                       className="rounded-2xl px-4 py-3 text-sm text-gray-200 transition hover:bg-white/5 hover:text-yellow-100"
                       role="menuitem"
                     >
@@ -243,6 +250,10 @@ export default function Navbar() {
 
           <Link
             href="/booking"
+            onClick={() => {
+              setIsServicesOpen(false);
+              setIsMobileMenuOpen(false);
+            }}
             className="rounded-full bg-yellow-500 px-6 py-2.5 font-medium text-black shadow-[0_8px_28px_rgba(234,179,8,0.26)] transition-all duration-300 hover:scale-[1.03] hover:bg-yellow-400 hover:shadow-[0_14px_34px_rgba(234,179,8,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70"
           >
             Book Session
@@ -263,6 +274,10 @@ export default function Navbar() {
               <Link
                 key={item.title}
                 href={item.href}
+                onClick={() => {
+                  setIsServicesOpen(false);
+                  setIsMobileMenuOpen(false);
+                }}
                 className="rounded-2xl px-4 py-3 text-sm uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5"
               >
                 {item.title}
@@ -289,6 +304,10 @@ export default function Navbar() {
               <div className="mt-1 grid gap-1 rounded-2xl border border-yellow-200/10 bg-white/[0.03] p-2">
                 <Link
                   href="/services"
+                  onClick={() => {
+                    setIsServicesOpen(false);
+                    setIsMobileMenuOpen(false);
+                  }}
                   className="rounded-xl px-3 py-2 text-sm text-yellow-100 transition hover:bg-white/5"
                 >
                   View All Services
@@ -297,6 +316,10 @@ export default function Navbar() {
                   <Link
                     key={service.href}
                     href={service.href}
+                    onClick={() => {
+                      setIsServicesOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="rounded-xl px-3 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-yellow-100"
                   >
                     {service.title}

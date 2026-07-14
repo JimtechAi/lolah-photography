@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 
 export default async function Hero() {
-  const heroImage = await getCloudinaryFolderImage("Hero", {
+  const heroImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 2400,
     height: 1500,
   });

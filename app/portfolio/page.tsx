@@ -2,12 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import PortfolioGallery from "@/components/portfolio/PortfolioGallery";
-import { portfolioCategoryOrder } from "@/constants/cloudinary-folders";
+import { getCloudinaryFolderByServiceSlug, portfolioCategoryOrder } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage, getCloudinaryFolderImages } from "@/lib/cloudinary-media";
 import { siteConfig } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const heroImage = await getCloudinaryFolderImage("Weddings", {
+  const weddingFolder = getCloudinaryFolderByServiceSlug("weddings");
+
+  if (!weddingFolder) {
+    throw new Error("Missing Cloudinary mapping for weddings service.");
+  }
+
+  const heroImage = await getCloudinaryFolderImage(weddingFolder, {
     width: 1200,
     height: 630,
   });
