@@ -32,6 +32,8 @@ const folderAliases: Record<string, string> = {
   "drones photography and videography": "Drones Photography And Videography",
 };
 
+const folderImageCache = new Map<string, CloudinaryMediaItem[]>();
+
 let configured = false;
 
 export type CloudinaryMediaItem = {
@@ -172,7 +174,7 @@ export async function getCloudinaryFolderImages(
         max_results: resultLimit,
       }),
     ["cloudinary-folder-images"],
-    { revalidate: 300 }
+    { revalidate: 3600 }
   );
 
   let response: { resources?: CloudinaryResource[] };
@@ -185,6 +187,15 @@ export async function getCloudinaryFolderImages(
     const errorMessage =
       cloudinaryError.error?.message || cloudinaryError.message || "Unknown Cloudinary error";
 
+    const stale = folderImageCache.get(folderPath);
+
+    if (errorMessage.includes("Rate Limit Exceeded") && stale?.length) {
+      console.warn(
+        `[Cloudinary] Rate limit hit for "${folderPath}". Serving stale cached media (${stale.length} item(s)).`
+      );
+      return stale.slice(0, maxResults);
+    }
+
     const message =
       `[Cloudinary] Failed to load images for "${folderPath}"` +
       `${errorCode ? ` (HTTP ${errorCode})` : ""}: ${errorMessage}`;
@@ -194,14 +205,30 @@ export async function getCloudinaryFolderImages(
   }
 
   const resources = response.resources ?? [];
+  const validResources = resources.filter(
+    (resource) =>
+      typeof resource.width === "number" &&
+      resource.width > 0 &&
+      typeof resource.height === "number" &&
+      resource.height > 0
+  );
 
-  if (!resources.length) {
+  if (!validResources.length) {
+    const stale = folderImageCache.get(folderPath);
+
+    if (stale?.length) {
+      console.warn(
+        `[Cloudinary] Folder "${folderPath}" returned no resources. Serving stale cached media (${stale.length} item(s)).`
+      );
+      return stale.slice(0, maxResults);
+    }
+
     const message = `[Cloudinary] No images found in folder "${folderPath}".`;
     console.error(message);
     throw new Error(message);
   }
 
-  const sortedResources = resources
+  const sortedResources = validResources
     .slice()
     .sort((a, b) =>
       a.public_id.localeCompare(b.public_id, undefined, {
@@ -210,7 +237,7 @@ export async function getCloudinaryFolderImages(
       })
     );
 
-  return sortedResources.map((resource) => {
+  const mappedImages = sortedResources.map((resource) => {
     const width = resource.width || options.width || 1600;
     const height = resource.height || options.height || 1200;
     const context = resource.context;
@@ -229,6 +256,10 @@ export async function getCloudinaryFolderImages(
       blurDataURL: getBlurDataURL(),
     };
   });
+
+  folderImageCache.set(folderPath, mappedImages);
+
+  return mappedImages;
 }
 
 export async function getCloudinaryFolderImage(

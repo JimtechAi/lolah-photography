@@ -32,13 +32,12 @@ export default function CloudinaryLogo({
 
   useEffect(() => {
     let isMounted = true;
-    const controller = new AbortController();
 
     const loadLogo = async () => {
       try {
         const response = await fetch(
           `/api/cloudinary/${encodeURIComponent(folderName)}?limit=1`,
-          { signal: controller.signal, cache: "force-cache" }
+          { cache: "force-cache" }
         );
 
         if (!response.ok) {
@@ -88,7 +87,6 @@ export default function CloudinaryLogo({
 
     return () => {
       isMounted = false;
-      controller.abort();
     };
   }, [folderName]);
 
