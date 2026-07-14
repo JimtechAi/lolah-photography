@@ -3,9 +3,16 @@ import "server-only";
 import { unstable_noStore as noStore } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 
-const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-const apiKey = process.env.CLOUDINARY_API_KEY;
-const apiSecret = process.env.CLOUDINARY_API_SECRET;
+function readEnv(name: string) {
+  const value = process.env[name]?.trim();
+  return value ? value : undefined;
+}
+
+const cloudName =
+  readEnv("NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME") ??
+  readEnv("NEXT_PUBLIC_CLOUDINARY_CLOUDE_NAME");
+const apiKey = readEnv("CLOUDINARY_API_KEY");
+const apiSecret = readEnv("CLOUDINARY_API_SECRET");
 const rootFolder = "lolah photography";
 
 let configured = false;
@@ -24,13 +31,21 @@ export type CloudinaryMediaFolderOptions = {
   height?: number;
 };
 
+type CloudinaryApiErrorLike = {
+  error?: {
+    message?: string;
+    http_code?: number;
+  };
+  message?: string;
+};
+
 function ensureCloudinaryConfig() {
   if (configured) {
-    return;
+    return true;
   }
 
   if (!cloudName || !apiKey || !apiSecret) {
-    throw new Error("Cloudinary environment variables are not configured.");
+    return false;
   }
 
   cloudinary.config({
@@ -41,6 +56,7 @@ function ensureCloudinaryConfig() {
   });
 
   configured = true;
+  return true;
 }
 
 function getFolderPath(folderName: string) {
@@ -63,7 +79,9 @@ export function buildCloudinaryImageUrl(
   publicId: string,
   options: { width?: number; height?: number } = {}
 ) {
-  ensureCloudinaryConfig();
+  if (!ensureCloudinaryConfig()) {
+    return getPlaceholderItem("Portfolio").src;
+  }
 
   return cloudinary.url(publicId, {
     secure: true,
@@ -81,7 +99,9 @@ export function buildCloudinaryImageUrl(
 }
 
 export function buildCloudinaryRawUrl(publicId: string) {
-  ensureCloudinaryConfig();
+  if (!ensureCloudinaryConfig()) {
+    return getPlaceholderItem("Portfolio").src;
+  }
 
   return cloudinary.url(publicId, { secure: true });
 }
@@ -91,14 +111,32 @@ export async function getCloudinaryFolderImages(
   options: CloudinaryMediaFolderOptions = {}
 ): Promise<CloudinaryMediaItem[]> {
   noStore();
-  ensureCloudinaryConfig();
+
+  if (!ensureCloudinaryConfig()) {
+    return [getPlaceholderItem(folderName)];
+  }
 
   const folderPath = getFolderPath(folderName);
-  const response = await cloudinary.api.resources_by_asset_folder(folderPath, {
-    resource_type: "image",
-    type: "upload",
-    max_results: options.limit ?? 500,
-  });
+  let response: { resources?: Array<any> };
+
+  try {
+    response = await cloudinary.api.resources_by_asset_folder(folderPath, {
+      resource_type: "image",
+      type: "upload",
+      max_results: options.limit ?? 500,
+    });
+  } catch (error) {
+    const cloudinaryError = error as CloudinaryApiErrorLike;
+    const errorCode = cloudinaryError.error?.http_code;
+    const errorMessage =
+      cloudinaryError.error?.message || cloudinaryError.message || "";
+
+    if (errorCode === 404 || errorMessage.includes("Folder doesn't exist")) {
+      return [getPlaceholderItem(folderName)];
+    }
+
+    throw new Error(errorMessage || "Unable to load Cloudinary assets.");
+  }
 
   const resources = response.resources ?? [];
 

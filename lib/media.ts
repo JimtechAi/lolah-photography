@@ -1,6 +1,8 @@
 import { siteConfig } from "@/lib/site";
 
-const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const cloudName =
+  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME?.trim() ??
+  process.env["NEXT_PUBLIC_CLOUDINARY_CLOUDE_NAME"]?.trim();
 
 export function getCloudinaryFetchUrl(
   sourcePath: string,
