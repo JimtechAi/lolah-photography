@@ -1,5 +1,6 @@
 export const cloudinaryFolderMap = {
   hero: "Hero",
+  about: "About",
   logo: "Logo",
   serviceBySlug: {
     weddings: "Weddings",

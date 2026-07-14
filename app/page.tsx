@@ -1,4 +1,4 @@
-import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
+import { getCloudinaryFolderImage, getCloudinaryFolderImages } from "@/lib/cloudinary-media";
 import { featuredServices } from "@/lib/services";
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
@@ -14,10 +14,12 @@ import Footer from "@/components/layout/Footer";
 import { cloudinaryFolderMap, portfolioCategoryOrder } from "@/constants/cloudinary-folders";
 
 export default async function Home() {
-  const aboutImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
+  const aboutImages = await getCloudinaryFolderImages(cloudinaryFolderMap.about, {
+    limit: 50,
     width: 900,
     height: 1200,
   });
+  const aboutImage = aboutImages[aboutImages.length - 1];
 
   const portfolioSourceFolders = portfolioCategoryOrder.slice(0, 4);
   const portfolioImages = await Promise.all(

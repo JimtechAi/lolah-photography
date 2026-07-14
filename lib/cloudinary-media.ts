@@ -17,6 +17,7 @@ const rootFolder = "lolah photography";
 
 const folderAliases: Record<string, string> = {
   hero: "Hero",
+  about: "About",
   logo: "Logo",
   weddings: "Weddings",
   traditional: "Traditional",

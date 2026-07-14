@@ -27,7 +27,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const heroImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 1200,
     height: 630,
-  });
+  }).catch(() => null);
+
+  const ogImages = heroImage
+    ? [
+        {
+          url: heroImage.src,
+          width: heroImage.width,
+          height: heroImage.height,
+          alt: heroImage.alt,
+        },
+      ]
+    : undefined;
 
   return {
     metadataBase: new URL(siteConfig.url),
@@ -57,20 +68,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Lolah Photography | Luxury Wedding Photographer in Ibadan",
       description: siteConfig.description,
       siteName: siteConfig.name,
-      images: [
-        {
-          url: heroImage.src,
-          width: heroImage.width,
-          height: heroImage.height,
-          alt: heroImage.alt,
-        },
-      ],
+      images: ogImages,
     },
     twitter: {
       card: "summary_large_image",
       title: "Lolah Photography | Luxury Wedding Photographer in Ibadan",
       description: siteConfig.description,
-      images: [heroImage.src],
+      images: heroImage ? [heroImage.src] : undefined,
       creator: "@lolah.photography",
     },
     robots: {
@@ -100,14 +104,14 @@ export default async function RootLayout({
   const heroImage = await getCloudinaryFolderImage(cloudinaryFolderMap.hero, {
     width: 1200,
     height: 630,
-  });
+  }).catch(() => null);
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: siteConfig.name,
     description: siteConfig.description,
-    image: heroImage.src,
+    ...(heroImage ? { image: heroImage.src } : {}),
     url: siteConfig.url,
     telephone: siteConfig.phone,
     email: siteConfig.email,

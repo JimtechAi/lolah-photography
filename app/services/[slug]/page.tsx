@@ -71,7 +71,12 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const galleryImages = await getCloudinaryFolderImages(service.folderName, {
     limit: 500,
   });
-  const serviceGalleryImages = galleryImages.map((image, index) => ({
+  const displayGalleryImages =
+    service.slug === "birthday" && galleryImages.length > 1
+      ? galleryImages.slice(1)
+      : galleryImages;
+
+  const serviceGalleryImages = displayGalleryImages.map((image, index) => ({
     ...image,
     title: image.alt || `${service.shortTitle} image ${index + 1}`,
   }));
