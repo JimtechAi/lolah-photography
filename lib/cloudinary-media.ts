@@ -15,6 +15,48 @@ const apiKey = readEnv("CLOUDINARY_API_KEY");
 const apiSecret = readEnv("CLOUDINARY_API_SECRET");
 const rootFolder = "lolah photography";
 
+const localFolderFallbacks: Record<string, string[]> = {
+  Hero: [
+    "/images/hero/hero1.webp",
+    "/images/hero/hero2.webp",
+    "/images/hero/hero3.webp",
+  ],
+  Weddings: [
+    "/images/portfolio/portfolio1.webp",
+    "/images/portfolio/portfolio2.webp",
+    "/images/portfolio/portfolio3.webp",
+  ],
+  Traditional: [
+    "/images/portfolio/portfolio2.webp",
+    "/images/portfolio/portfolio4.webp",
+  ],
+  Engagements: [
+    "/images/portfolio/portfolio3.webp",
+    "/images/portfolio/portfolio5.webp",
+  ],
+  "Bridal Portraits": [
+    "/images/lolah/lolah.webp",
+    "/images/lolah/lolah1.webp.jpeg",
+  ],
+  Maternity: ["/images/lolah/lolah1.webp.jpeg"],
+  Family: ["/images/portfolio/portfolio6.webp"],
+  "Baby And Newborn": ["/images/lolah/lolah.webp.jpeg"],
+  "Birthday Photography": ["/images/portfolio/portfolio4.webp"],
+  "Corporate Portraits": ["/images/lolah/lolah.webp"],
+  Events: ["/images/portfolio/portfolio5.webp"],
+  "Drones Photography And Videography": ["/images/portfolio/portfolio6.webp"],
+  testimonials: [
+    "/images/lolah/lolah.webp",
+    "/images/portfolio/portfolio1.webp",
+    "/images/portfolio/portfolio2.webp",
+  ],
+  default: [
+    "/images/hero/hero1.webp",
+    "/images/portfolio/portfolio1.webp",
+    "/images/lolah/lolah.webp",
+  ],
+};
+
 let configured = false;
 
 export type CloudinaryMediaItem = {
@@ -75,12 +117,33 @@ function getPlaceholderItem(folderName: string): CloudinaryMediaItem {
   };
 }
 
+function getLocalFallbackItems(folderName: string): CloudinaryMediaItem[] {
+  const fallbackSources =
+    localFolderFallbacks[folderName] ?? localFolderFallbacks.default;
+
+  return fallbackSources.map((src, index) => ({
+    publicId: `${getFolderPath(folderName)}/local-fallback-${index + 1}`,
+    src,
+    alt: `${folderName} preview`,
+    width: 1600,
+    height: 1200,
+  }));
+}
+
+function getFallbackItems(folderName: string, limit: number) {
+  const items = getLocalFallbackItems(folderName);
+  return items.length ? items.slice(0, limit) : [getPlaceholderItem(folderName)];
+}
+
 export function buildCloudinaryImageUrl(
   publicId: string,
   options: { width?: number; height?: number } = {}
 ) {
   if (!ensureCloudinaryConfig()) {
-    return getPlaceholderItem("Portfolio").src;
+    return (
+      getLocalFallbackItems("default")[0]?.src ??
+      getPlaceholderItem("Portfolio").src
+    );
   }
 
   return cloudinary.url(publicId, {
@@ -100,7 +163,10 @@ export function buildCloudinaryImageUrl(
 
 export function buildCloudinaryRawUrl(publicId: string) {
   if (!ensureCloudinaryConfig()) {
-    return getPlaceholderItem("Portfolio").src;
+    return (
+      getLocalFallbackItems("default")[0]?.src ??
+      getPlaceholderItem("Portfolio").src
+    );
   }
 
   return cloudinary.url(publicId, { secure: true });
@@ -113,7 +179,7 @@ export async function getCloudinaryFolderImages(
   noStore();
 
   if (!ensureCloudinaryConfig()) {
-    return [getPlaceholderItem(folderName)];
+    return getFallbackItems(folderName, options.limit ?? 500);
   }
 
   const folderPath = getFolderPath(folderName);
@@ -132,7 +198,7 @@ export async function getCloudinaryFolderImages(
       cloudinaryError.error?.message || cloudinaryError.message || "";
 
     if (errorCode === 404 || errorMessage.includes("Folder doesn't exist")) {
-      return [getPlaceholderItem(folderName)];
+      return getFallbackItems(folderName, options.limit ?? 500);
     }
 
     throw new Error(errorMessage || "Unable to load Cloudinary assets.");
@@ -141,7 +207,7 @@ export async function getCloudinaryFolderImages(
   const resources = response.resources ?? [];
 
   if (!resources.length) {
-    return [getPlaceholderItem(folderName)];
+    return getFallbackItems(folderName, options.limit ?? 500);
   }
 
   return resources.map((resource) => {
