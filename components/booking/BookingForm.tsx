@@ -224,7 +224,7 @@ export default function BookingForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 inline-flex items-center justify-center rounded-full bg-yellow-500 px-8 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-black shadow-[0_14px_40px_rgba(234,179,8,0.28)] transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-6 w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-yellow-500 px-8 py-4 sm:py-5 text-sm sm:text-base font-semibold uppercase tracking-[0.18em] text-black shadow-[0_14px_40px_rgba(234,179,8,0.28)] transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-70 active:scale-95 touch-manipulation"
         >
           {isSubmitting ? "Sending Booking..." : submitLabel}
         </button>
@@ -245,7 +245,7 @@ function FormField({
   required?: boolean;
 }) {
   return (
-    <label className="grid gap-2 text-sm text-gray-200" htmlFor={name}>
+    <label className="grid gap-2 text-sm text-gray-200 sm:text-base" htmlFor={name}>
       <span className="uppercase tracking-[0.18em] text-yellow-50/90">
         {label}
         {required ? " *" : ""}
@@ -256,4 +256,4 @@ function FormField({
 }
 
 const inputClassName =
-  "w-full rounded-2xl border border-yellow-200/15 bg-[#1b1713] px-4 py-3 text-base text-white outline-none transition placeholder:text-gray-500 focus:border-yellow-300/60 focus:ring-2 focus:ring-yellow-300/15";
+  "w-full rounded-2xl border border-yellow-200/15 bg-[#1b1713] px-4 py-3.5 sm:py-4 text-base sm:text-lg text-white outline-none transition placeholder:text-gray-500 focus:border-yellow-300/60 focus:ring-2 focus:ring-yellow-300/15 touch-manipulation";

@@ -160,13 +160,13 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-full border border-yellow-200/20 bg-white/5 p-2.5 text-yellow-100 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70 md:hidden"
+          className="inline-flex items-center justify-center rounded-full border border-yellow-200/20 bg-white/5 p-3 sm:p-3 text-yellow-100 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70 md:hidden touch-manipulation active:scale-95"
           onClick={() => setIsMobileMenuOpen((current) => !current)}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-navigation"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -263,7 +263,7 @@ export default function Navbar() {
         <div
           id="mobile-navigation"
           ref={mobileMenuRef}
-          className={`absolute inset-x-4 top-[88px] rounded-3xl border border-yellow-200/15 bg-black/92 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl transition md:hidden ${
+          className={`absolute inset-x-4 top-[88px] rounded-3xl border border-yellow-200/15 bg-black/92 p-6 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl transition md:hidden ${
             isMobileMenuOpen
               ? "visible opacity-100"
               : "pointer-events-none invisible opacity-0"
@@ -278,7 +278,7 @@ export default function Navbar() {
                   setIsServicesOpen(false);
                   setIsMobileMenuOpen(false);
                 }}
-                className="rounded-2xl px-4 py-3 text-sm uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5"
+                className="rounded-2xl px-4 py-4 sm:py-5 text-base sm:text-lg uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5 active:scale-95 touch-manipulation"
               >
                 {item.title}
               </Link>
@@ -287,12 +287,12 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsServicesOpen((current) => !current)}
-              className="mt-1 inline-flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70"
+              className="mt-2 inline-flex items-center justify-between rounded-2xl px-4 py-4 sm:py-5 text-left text-base sm:text-lg uppercase tracking-[0.12em] text-gray-100 transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/70 active:scale-95 touch-manipulation"
               aria-expanded={isServicesOpen}
               aria-controls="mobile-services-submenu"
             >
               Services
-              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isServicesOpen ? "rotate-180" : "rotate-0"}`} />
+              <ChevronDown className={`h-5 w-5 transition-transform duration-200 ${isServicesOpen ? "rotate-180" : "rotate-0"}`} />
             </button>
 
             <div
@@ -301,14 +301,14 @@ export default function Navbar() {
                 isServicesOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
               }`}
             >
-              <div className="mt-1 grid gap-1 rounded-2xl border border-yellow-200/10 bg-white/[0.03] p-2">
+              <div className="mt-2 grid gap-1 rounded-2xl border border-yellow-200/10 bg-white/[0.03] p-3">
                 <Link
                   href="/services"
                   onClick={() => {
                     setIsServicesOpen(false);
                     setIsMobileMenuOpen(false);
                   }}
-                  className="rounded-xl px-3 py-2 text-sm text-yellow-100 transition hover:bg-white/5"
+                  className="rounded-xl px-4 py-3 sm:py-4 text-base text-yellow-100 transition hover:bg-white/5 active:scale-95 touch-manipulation"
                 >
                   View All Services
                 </Link>
@@ -320,7 +320,7 @@ export default function Navbar() {
                       setIsServicesOpen(false);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="rounded-xl px-3 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-yellow-100"
+                    className="rounded-xl px-4 py-3 sm:py-4 text-base text-gray-200 transition hover:bg-white/5 hover:text-yellow-100 active:scale-95 touch-manipulation"
                   >
                     {service.title}
                   </Link>

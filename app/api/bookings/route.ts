@@ -1,21 +1,19 @@
+import { Resend } from "resend";
 import type { BookingFormData } from "@/types/booking";
-
-const resendApiUrl = "https://api.resend.com/emails";
-const destinationEmail =
-  process.env.RESEND_TO_EMAIL || "booklolahphotography@gmail.com";
 
 type BookingPayload = Partial<BookingFormData>;
 
 export async function POST(request: Request) {
   try {
     const resendApiKey = process.env.RESEND_API_KEY;
-    const resendFromEmail = process.env.RESEND_FROM_EMAIL;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+    const toEmail = process.env.BOOKING_EMAIL;
 
-    if (!resendApiKey || !resendFromEmail) {
+    if (!resendApiKey || !fromEmail || !toEmail) {
       return Response.json(
         {
           error:
-            "Booking email is not configured yet. Add RESEND_API_KEY and RESEND_FROM_EMAIL on the server.",
+            "Email delivery is not configured. Please add RESEND_API_KEY, RESEND_FROM_EMAIL and BOOKING_EMAIL to the server environment.",
         },
         { status: 500 }
       );
@@ -31,42 +29,36 @@ export async function POST(request: Request) {
       );
     }
 
-    const resendResponse = await fetch(resendApiUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: resendFromEmail,
-        to: [destinationEmail],
-        reply_to: booking.email,
-        subject: `New Booking Request: ${booking.brideName} & ${booking.groomName}`,
-        text: createPlainTextEmail(booking),
-        html: createHtmlEmail(booking),
-      }),
+    const resend = new Resend(resendApiKey);
+
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to: [toEmail],
+      replyTo: booking.email,
+      subject: `New Booking Request: ${booking.brideName} ${booking.groomName}`,
+      text: createPlainTextEmail(booking),
+      html: createHtmlEmail(booking),
     });
 
-    if (!resendResponse.ok) {
-      const failure = (await resendResponse.json().catch(() => null)) as
-        | { message?: string; error?: string }
-        | null;
-
+    if (error) {
+      console.error("[Resend] email send error:", JSON.stringify(error, null, 2));
       return Response.json(
         {
-          error:
-            failure?.message ||
-            failure?.error ||
-            "The booking email could not be delivered.",
+          error: error.message || "The booking email could not be delivered.",
+          resendError: {
+            name: error.name,
+            message: error.message,
+          },
         },
         { status: 502 }
       );
     }
 
     return Response.json({ ok: true }, { status: 200 });
-  } catch {
+  } catch (err) {
+    console.error("[Resend] unexpected error:", err);
     return Response.json(
-      { error: "An unexpected error occurred while sending your booking." },
+      { error: "An unexpected error occurred while sending your booking.", details: String(err) },
       { status: 500 }
     );
   }

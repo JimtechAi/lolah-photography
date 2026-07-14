@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Manrope, Playfair_Display } from "next/font/google";
 import BrandLoader from "@/components/ui/BrandLoader";
 import FloatingSocial from "@/components/ui/FloatingSocial";
@@ -6,6 +6,14 @@ import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+};
 
 const manrope = Manrope({
   variable: "--font-manrope",
