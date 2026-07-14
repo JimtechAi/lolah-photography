@@ -8,7 +8,7 @@ export default async function Hero() {
     width: 2400,
     height: 1500,
   });
-
+ 
   return (
     <section className="relative min-h-[100svh] w-full overflow-hidden">
       {/* Background Image */}

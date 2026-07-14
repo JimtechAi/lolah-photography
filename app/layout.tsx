@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   userScalable: true,
   viewportFit: "cover",
 };
-
+ 
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
