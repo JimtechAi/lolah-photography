@@ -53,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(siteConfig.url),
 
   verification: {
-    google: "Ze_0h9veHU2If_pcTuLCP04S1JEovW3Ksur9CZbXxgE",
+    google: "Ze_Oh9veHU2lf_pcIuLC9B4SlJEovW3Ksur9CZbXKsg",
   },
 
   title: {
