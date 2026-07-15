@@ -51,19 +51,25 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(siteConfig.url),
-    title: {
-      default: "Lolah Photography | Luxury Wedding Photographer in Ibadan",
-      template: "%s | Lolah Photography",
-    },
-    description: siteConfig.description,
-    applicationName: siteConfig.name,
-    keywords: [
-      "Lolah Photography",
-      "wedding photographer Ibadan",
-      "luxury wedding photography Nigeria",
-      "bridal portraits",
-      "traditional wedding photographer",
-    ],
+
+  verification: {
+    google: "Ze_0h9veHU2If_pcTuLCP04S1JEovW3Ksur9CZbXxgE",
+  },
+
+  title: {
+    default: "Lolah Photography | Luxury Wedding Photographer in Ibadan",
+    template: "%s | Lolah Photography",
+  },
+
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  keywords: [
+    "Lolah Photography",
+    "wedding photographer Ibadan",
+    "luxury wedding photography Nigeria",
+    "bridal portraits",
+    "traditional wedding photographer",
+  ],
     authors: [{ name: "Lolah Photography" }],
     creator: "Lolah Photography",
     publisher: "Lolah Photography",
