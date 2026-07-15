@@ -6,6 +6,7 @@ import { cloudinaryFolderMap } from "@/constants/cloudinary-folders";
 import { getCloudinaryFolderImage } from "@/lib/cloudinary-media";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -160,6 +161,8 @@ export default async function RootLayout({
         />
         {children}
         <FloatingSocial />
+
+        <GoogleAnalytics gaId="G-70H2CG37HH" />
       </body>
     </html>
   );

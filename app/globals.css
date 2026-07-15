@@ -196,3 +196,19 @@ summary:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* Date input calendar styling - light/white calendar */
+input[type="date"] {
+  color-scheme: light;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
+
+/* Firefox date input styling */
+input[type="date"]::-moz-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
